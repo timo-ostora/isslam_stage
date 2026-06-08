@@ -1,0 +1,150 @@
+models:
+  User:
+    id: uuid primary
+    first_name: string
+    last_name: string
+    email: string unique
+    password: string
+    email_verified_at: timestamp nullable
+    remember_token: string nullable
+    timestamps: true
+
+  Category:
+    id: uuid primary
+    parent_id: uuid foreign:categories nullable
+    title: string
+    description: string
+    timestamps: true
+
+  Course:
+    id: uuid primary
+    slug: string unique
+    category_id: uuid foreign:categories
+    created_by: uuid foreign:users
+    title: string
+    description: text
+    thumbnail_url: string nullable
+    status: enum:draft,published,archived default:draft
+    duration_seconds: unsignedInteger default:0
+    difficulty_level: enum:easy,medium,hard
+    language: string default:en
+    timestamps: true
+    softDeletes: true
+
+  Enrollment:
+    id: uuid primary
+    user_id: uuid foreign:users
+    course_id: uuid foreign:courses
+    status: enum:active,completed,cancelled default:active
+    progress_percentage: decimal:5,2 default:0
+    completed_at: timestamp nullable
+    timestamps: true
+    softDeletes: true
+    indexes:
+      - unique: user_id, course_id
+    # unique constraint handled in migration (user_id + course_id)
+
+  Module:
+    id: uuid primary
+    course_id: uuid foreign:courses
+    title: string
+    order_index: unsignedInteger default:0
+    description: text nullable
+    timestamps: true
+    softDeletes: true
+
+  Lesson:
+    id: uuid primary
+    module_id: uuid foreign:modules
+    order_index: unsignedInteger default:0
+    title: string
+    description: string nullable
+    type: enum:video,article,pdf,link
+    content_url: string nullable
+    content_text: text nullable
+    metadata: json nullable
+    duration_seconds: unsignedInteger default:0
+    timestamps: true
+    softDeletes: true
+
+  LessonProgress:
+    id: uuid primary
+    user_id: uuid foreign:users
+    lesson_id: uuid foreign:lessons
+    completed: boolean default:false
+    completed_at: timestamp nullable
+    timestamps: true
+    indexes:
+      - unique: user_id, lesson_id
+    # unique constraint: user_id + lesson_id
+
+  Assessment:
+    id: uuid primary
+    module_id: uuid foreign:modules
+    order_index: unsignedInteger default:0
+    title: string
+    description: string nullable
+    type: enum:quiz,exam,assignment
+    duration_seconds: unsignedInteger nullable
+    passing_score: unsignedInteger default:50
+    max_attempts: unsignedInteger nullable
+    timestamps: true
+    softDeletes: true
+
+  Question:
+    id: uuid primary
+    assessment_id: uuid foreign:assessments
+    question_text: text
+    type: enum:single_choice,multiple_choice,true_false
+    points: unsignedInteger default:1
+    order_index: unsignedInteger nullable
+    timestamps: true
+
+  QuestionOption:
+    id: uuid primary
+    question_id: uuid foreign:questions
+    option_text: string
+    is_correct: boolean default:false
+    timestamps: true
+
+  Attempt:
+    id: uuid primary
+    user_id: uuid foreign:users
+    assessment_id: uuid foreign:assessments
+    score: unsignedInteger default:0
+    passed: boolean default:false
+    started_at: timestamp
+    submitted_at: timestamp nullable
+    time_taken_seconds: unsignedInteger nullable
+    timestamps: true
+    softDeletes: true
+
+  AttemptAnswer:
+    id: uuid primary
+    attempt_id: uuid foreign:attempts
+    question_id: uuid foreign:questions
+    question_option_id: uuid foreign:question_options nullable
+    timestamps: true
+
+  # Tracks which questions were served in an attempt — prevents duplicates
+  AttemptQuestion:
+    id: uuid primary
+    attempt_id: uuid foreign:attempts
+    question_id: uuid foreign:questions
+    timestamps: true
+
+  Certificate:
+    id: uuid primary
+    user_id: uuid foreign:users
+    course_id: uuid foreign:courses
+    certificate_number: string unique
+    issued_at: timestamp
+    timestamps: true
+
+
+controllers:
+  # intentionally left empty — using Filament resources instead
+
+
+seeders:
+  # recommended order: Category, User, Course, Module, Lesson, Assessment, Question, QuestionOption

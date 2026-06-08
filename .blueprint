@@ -1,0 +1,11 @@
+models:
+    Assessment: { module_id: integer, order_index: "integer default:'0'", title: string, description: 'string nullable', type: "string default:'quiz'", duration_seconds: "integer default:'0'", passing_score: "integer default:'60'", max_attempts: 'integer nullable' }
+    Attempt: { user_id: integer, assessment_id: integer, score: "integer default:'0'", passed: "boolean default:'0'", started_at: datetime, submitted_at: 'datetime nullable', time_taken_seconds: 'integer nullable' }
+    AttemptAnswer: { attempt_id: integer, question_id: integer, question_option_id: 'integer nullable', created_at: 'datetime default:CURRENT_TIMESTAMP' }
+    Category: { parent_id: 'integer nullable', title: string, description: 'text nullable' }
+    Course: { slug: string, category_id: integer, created_by: integer, title: string, description: 'text nullable', thumbnail_url: 'string nullable', status: "string default:'draft'", duration_seconds: "integer default:'0'", difficulty_level: "string default:'easy'", language: "string default:'en'" }
+    Lesson: { module_id: integer, order_index: "integer default:'0'", title: string, description: 'string nullable', type: "string default:'article'", content_url: 'string nullable', content_text: 'text nullable', metadata: 'text nullable', duration_seconds: "integer default:'0'" }
+    Module: { course_id: integer, title: string, order_index: "integer default:'0'", description: 'text nullable' }
+    Question: { assessment_id: integer, question_text: text, type: "string default:'single_choice'", points: "integer default:'1'", order_index: 'integer nullable' }
+    QuestionOption: { question_id: integer, option_text: string, is_correct: "boolean default:'0'" }
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable', two_factor_secret: 'text nullable', two_factor_recovery_codes: 'text nullable', two_factor_confirmed_at: 'datetime nullable' }
