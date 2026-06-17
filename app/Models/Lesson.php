@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lesson extends Model
 {
+    use HasFactory, SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'module_id',
         'title',
         'description',
         'type',
@@ -17,9 +27,27 @@ class Lesson extends Model
         'duration_seconds',
     ];
 
-    public function module()
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->belongsTo(Module::class);
+        return [
+            'id' => 'integer',
+            'metadata' => 'array',
+            'duration_seconds' => 'integer',
+        ];
     }
 
+    public function moduleItems(): MorphMany
+    {
+        return $this->morphMany(ModuleItem::class, 'moduleitemable');
+    }
+
+    public function lessonProgresses(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
 }

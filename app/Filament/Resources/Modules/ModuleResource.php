@@ -9,10 +9,13 @@ use App\Filament\Resources\Modules\Schemas\ModuleForm;
 use App\Filament\Resources\Modules\Tables\ModulesTable;
 use App\Models\Module;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ModuleResource extends Resource
 {
@@ -20,7 +23,9 @@ class ModuleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'module';
+    protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
+
+    protected static ?string $recordTitleAttribute = 'Module';
 
     public static function form(Schema $schema): Schema
     {
@@ -35,7 +40,7 @@ class ModuleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ModuleItemRelationManager::class,
         ];
     }
 
@@ -45,7 +50,14 @@ class ModuleResource extends Resource
             'index' => ListModules::route('/'),
             'create' => CreateModule::route('/create'),
             'edit' => EditModule::route('/{record}/edit'),
-            'view' => Pages\ViewModule::route('/{record}'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

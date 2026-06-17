@@ -7,15 +7,16 @@ use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\Pages\ListCourses;
 use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Filament\Resources\Courses\Tables\CoursesTable;
-use App\Models\Course;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use App\Models\Course;
+use UnitEnum;
 
 class CourseResource extends Resource
 {
@@ -25,7 +26,7 @@ class CourseResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Course';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Course Management';
+    protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
 
     public static function form(Schema $schema): Schema
     {
@@ -40,6 +41,7 @@ class CourseResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\EnrolleesRelationManager::class,
             RelationManagers\ModulesRelationManager::class,
         ];
     }

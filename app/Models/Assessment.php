@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Enums\AssessmentType;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Assessment extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'module_id',
-        'order_index',
         'title',
         'description',
         'type',
@@ -23,41 +26,33 @@ class Assessment extends Model
         'max_attempts',
     ];
 
-    protected $casts = [
-        'type' => AssessmentType::class,
-    ];
-
-    public function module(): BelongsTo
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->belongsTo(Module::class);
+        return [
+            'id' => 'integer',
+            'duration_seconds' => 'integer',
+            'passing_score' => 'integer',
+            'max_attempts' => 'integer',
+        ];
+    }
+
+    public function moduleItems(): MorphMany
+    {
+        return $this->morphMany(ModuleItem::class, 'moduleitemable');
     }
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class)->orderBy('order_index');
+        return $this->hasMany(Question::class);
     }
 
     public function attempts(): HasMany
     {
         return $this->hasMany(Attempt::class);
-    }
-
-    public function totalPoints(): int
-    {
-        return $this->questions()->sum('points');
-    }
-
-    public function userAttempts(int $userId): HasMany
-    {
-        return $this->attempts()->where('user_id', $userId);
-    }
-
-    public function hasReachedMaxAttempts(int $userId): bool
-    {
-        if (is_null($this->max_attempts)) {
-            return false;
-        }
-
-        return $this->userAttempts($userId)->count() >= $this->max_attempts;
     }
 }

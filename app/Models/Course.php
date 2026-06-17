@@ -2,27 +2,46 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\CourseStatus; 
-use App\Enums\DifficultyLevel;                  
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'slug', 'category_id', 'created_by', 'title', 'description',
-        'thumbnail_url', 'status', 'duration_seconds', 'difficulty_level', 'language',
+        'slug',
+        'category_id',
+        'creator_id',
+        'title',
+        'description',
+        'thumbnail_url',
+        'status',
+        'difficulty_level',
+        'language',
     ];
 
-    protected $casts = [
-        'status' => CourseStatus::class,
-        'difficulty_level' => DifficultyLevel::class,
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'category_id' => 'integer',
+            'creator_id' => 'integer',
+        ];
+    }
 
     public function category(): BelongsTo
     {
@@ -31,21 +50,21 @@ class Course extends Model
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
     public function modules(): HasMany
     {
-        return $this->hasMany(Module::class)->orderBy('order_index');
+        return $this->hasMany(Module::class);
     }
 
-    public function enrollments(): HasMany
+    public function enrollees(): HasMany
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class, 'course_id');
     }
 
-    public function scopePublished(Builder $query): Builder
-    {
-        return $query->where('status', 'published');
-    }
+    // public function certificates(): HasMany
+    // {
+    //     return $this->hasMany(Certificate::class);
+    // }
 }

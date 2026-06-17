@@ -8,9 +8,9 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;    
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CourseForm
 {
@@ -50,7 +50,7 @@ class CourseForm
                 ->preload()
                 ->required(),
 
-            Select::make('created_by')
+            Select::make('creator_id')
                         ->relationship('creator', 'name')
                         ->searchable()
                         ->preload()
@@ -61,11 +61,12 @@ class CourseForm
                 ->icon('heroicon-o-photo')
                 ->schema([
                     FileUpload::make('thumbnail_url')
-                        ->image()
-                        ->imagePreviewHeight('160')
+                        ->label('Course Thumbnail')
+                        ->image() 
+                        ->disk('public') 
                         ->directory('course-thumbnails')
                         ->visibility('public')
-                        ->hiddenLabel(),
+                        ->nullable(),
                 ]),
 
             Section::make('Settings')

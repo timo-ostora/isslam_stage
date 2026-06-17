@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+// use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\Contracts\PasskeyUser;
@@ -36,18 +37,24 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
-    public function courses(): HasMany
+    public function courses(): BelongsToMany
     {
-        return $this->hasMany(Course::class, 'created_by');
+        
+        return $this->belongsToMany(Course::class, 'enrollments', 'course_id', 'user_id')
+        ->using(Enrollment::class)
+        ->withPivot(['id', 'status', 'progress_percentage', 'completed_at']) // 💡 Crucial for Filament
+        ->withTimestamps()
+        ->whereNull('enrollments.deleted_at'); // Handles pivot soft deletes
     }
 
+    
     public function enrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class, 'user_id');
     }
 
-    public function attempts(): HasMany
-    {
-        return $this->hasMany(Attempt::class);
-    }
+    // public function attempts(): HasMany
+    // {
+    //     return $this->hasMany(Attempt::class);
+    // }
 }

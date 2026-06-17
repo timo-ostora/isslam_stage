@@ -1,11 +1,33 @@
+created:
+    - database/factories/CategoryFactory.php
+    - database/factories/CourseFactory.php
+    - database/factories/EnrollmentFactory.php
+    - database/factories/ModuleFactory.php
+    - database/factories/ModuleItemFactory.php
+    - database/factories/LessonFactory.php
+    - database/factories/AssessmentFactory.php
+    - database/migrations/2026_06_15_184223_create_categories_table.php
+    - database/migrations/2026_06_15_184224_create_courses_table.php
+    - database/migrations/2026_06_15_184225_create_enrollments_table.php
+    - database/migrations/2026_06_15_184226_create_modules_table.php
+    - database/migrations/2026_06_15_184227_create_module_items_table.php
+    - database/migrations/2026_06_15_184228_create_lessons_table.php
+    - database/migrations/2026_06_15_184229_create_assessments_table.php
+    - database/migrations/2026_06_15_184230_create_enrollment_user_table.php
+    - database/migrations/2026_06_15_184231_create_course_enrollment_table.php
+    - app/Models/Category.php
+    - app/Models/Course.php
+    - app/Models/Enrollment.php
+    - app/Models/Module.php
+    - app/Models/ModuleItem.php
+    - app/Models/Lesson.php
+    - app/Models/Assessment.php
 models:
-    Assessment: { module_id: integer, order_index: "integer default:'0'", title: string, description: 'string nullable', type: "string default:'quiz'", duration_seconds: "integer default:'0'", passing_score: "integer default:'60'", max_attempts: 'integer nullable' }
-    Attempt: { user_id: integer, assessment_id: integer, score: "integer default:'0'", passed: "boolean default:'0'", started_at: datetime, submitted_at: 'datetime nullable', time_taken_seconds: 'integer nullable' }
-    AttemptAnswer: { attempt_id: integer, question_id: integer, question_option_id: 'integer nullable', created_at: 'datetime default:CURRENT_TIMESTAMP' }
-    Category: { parent_id: 'integer nullable', title: string, description: 'text nullable' }
-    Course: { slug: string, category_id: integer, created_by: integer, title: string, description: 'text nullable', thumbnail_url: 'string nullable', status: "string default:'draft'", duration_seconds: "integer default:'0'", difficulty_level: "string default:'easy'", language: "string default:'en'" }
-    Lesson: { module_id: integer, order_index: "integer default:'0'", title: string, description: 'string nullable', type: "string default:'article'", content_url: 'string nullable', content_text: 'text nullable', metadata: 'text nullable', duration_seconds: "integer default:'0'" }
-    Module: { course_id: integer, title: string, order_index: "integer default:'0'", description: 'text nullable' }
-    Question: { assessment_id: integer, question_text: text, type: "string default:'single_choice'", points: "integer default:'1'", order_index: 'integer nullable' }
-    QuestionOption: { question_id: integer, option_text: string, is_correct: "boolean default:'0'" }
     User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable', two_factor_secret: 'text nullable', two_factor_recovery_codes: 'text nullable', two_factor_confirmed_at: 'datetime nullable' }
+    Category: { parent_id: 'id foreign:categories nullable', title: 'string unique', description: 'text nullable', timestamps: timestamps, relationships: { hasMany: 'Course, Category:children', belongsTo: 'Category:parent' } }
+    Course: { slug: 'string unique', category_id: 'id foreign:categories', creator_id: 'id foreign:users', title: string, description: string, thumbnail_url: 'string nullable', status: 'enum:draft,published,archived default:draft', difficulty_level: 'enum:easy,medium,hard', language: 'string default:en', timestamps: timestamps, softdeletes: softDeletes, relationships: { belongsTo: 'Category, User:creator', hasMany: 'Module, Enrollment, Certificate, User' } }
+    Enrollment: { user_id: 'id foreign:users', course_id: 'id foreign:courses', status: 'enum:active,completed,cancelled default:active', progress_percentage: 'decimal:5,2 default:0', completed_at: 'timestamp nullable', timestamps: timestamps, softdeletes: softDeletes, indexes: [{ unique: 'user_id, course_id' }, { index: 'user_id, status' }], relationships: { belongsToMany: 'User, Course' } }
+    Module: { course_id: 'id foreign:courses', title: string, order_index: 'unsignedInteger default:0', description: 'text nullable', timestamps: timestamps, softdeletes: softDeletes, relationships: { belongsTo: Course, hasMany: ModuleItem } }
+    ModuleItem: { module_id: 'id foreign:modules', position: integer, timestamps: true, relationships: { belongsTo: Module, morphTo: itemable } }
+    Lesson: { title: string, description: 'string nullable', type: 'enum:video,article,pdf,link', content_url: 'string nullable', content_text: 'text nullable', metadata: 'json nullable', duration_seconds: 'unsignedInteger default:0', timestamps: timestamps, softdeletes: softDeletes, relationships: { morphMany: ModuleItem, hasMany: LessonProgress } }
+    Assessment: { title: string, description: 'string nullable', type: 'enum:quiz,exam,assignment', duration_seconds: 'unsignedInteger nullable', passing_score: 'unsignedInteger default:50', max_attempts: 'unsignedInteger nullable', timestamps: timestamps, softdeletes: softDeletes, relationships: { morphMany: ModuleItem, hasMany: 'Question, Attempt' } }

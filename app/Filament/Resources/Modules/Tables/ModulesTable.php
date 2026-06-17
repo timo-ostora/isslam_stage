@@ -5,10 +5,11 @@ namespace App\Filament\Resources\Modules\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-// use Pest\Support\View;
 
 class ModulesTable
 {
@@ -17,20 +18,12 @@ class ModulesTable
         return $table
             ->columns([
                 TextColumn::make('course.title')
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('lessons_count')
-                    ->counts('lessons')
-                    ->label('Lessons'),
-                TextColumn::make('assessment_count')
-                    ->counts('assessments')
-                    ->label('Assessments'),
                 TextColumn::make('order_index')
                     ->numeric()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -45,15 +38,16 @@ class ModulesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                ViewAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
