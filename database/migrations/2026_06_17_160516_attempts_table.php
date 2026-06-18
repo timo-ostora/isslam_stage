@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->unsignedInteger('position')->default(0);
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('assessment_id')->constrained();
+            $table->unsignedInteger('score')
+            ->default(0);
+            $table->boolean('passed');
+            $table->timestamp('started_id');
+            $table->timestamp('submitted_at');
+            $table->unsignedInteger('time_taken_seconds')
+                ->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('attempts');
     }
 };

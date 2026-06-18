@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('enrollment_user', function (Blueprint $table) {
-            $table->foreignId('enrollment_id');
-            $table->foreignId('user_id');
+        Schema::create('certificates', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('course_id')->constrained();
+            $table->string('certificate_number', 255)->unique();
+            $table->timestamp('issued_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('enrollment_user');
+        Schema::dropIfExists('certificates');
     }
 };

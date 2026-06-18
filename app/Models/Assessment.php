@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Assessment extends Model
@@ -41,9 +41,9 @@ class Assessment extends Model
         ];
     }
 
-    public function moduleItems(): MorphMany
+    public function module(): MorphOne
     {
-        return $this->morphMany(ModuleItem::class, 'moduleitemable');
+        return $this->morphOne(Module::class, 'itemable');
     }
 
     public function questions(): HasMany

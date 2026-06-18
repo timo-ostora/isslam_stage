@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('question_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->unsignedInteger('position')->default(0);
+            $table->foreignId('question_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->string('option_text', 255);
+            $table->boolean('is_correct');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('question_options');
     }
 };

@@ -16,9 +16,11 @@ return new class extends Migration
         Schema::create('module_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('module_id')->constrained();
-            $table->integer('position');
+            $table->unsignedInteger('position')
+                ->default(0);
             $table->morphs('itemable');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

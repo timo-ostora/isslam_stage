@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Enrollment extends Pivot
+class Certificate extends Model
 {
+    use SoftDeletes;
 
-    /**
+        /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -17,9 +18,8 @@ class Enrollment extends Pivot
     protected $fillable = [
         'user_id',
         'course_id',
-        'status',
-        'progress_percentage',
-        'completed_at',
+        'certificate_number',
+        'issued_at'
     ];
 
     /**
@@ -30,11 +30,8 @@ class Enrollment extends Pivot
     protected function casts(): array
     {
         return [
-            'id' => 'integer',
-            'user_id' => 'integer',
-            'course_id' => 'integer',
-            'progress_percentage' => 'decimal:2',
-            'completed_at' => 'timestamp',
+            'certificate_number' => 'string',
+            'issued_at' => 'timestamp',
         ];
     }
 

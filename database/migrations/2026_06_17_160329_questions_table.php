@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
-            $table->string('title');
-            $table->text('description')->nullable();
+
+            $table->foreignId('assessment_id')
+                ->constrained();
+
+            $table->string('question_text', 255);
+            $table->enum('type', ['single_choice','multiple_choice','true_false']);
+            $table->unsignedInteger('points');
             $table->unsignedInteger('position')->default(0);
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('questions');
     }
 };

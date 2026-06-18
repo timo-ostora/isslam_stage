@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class CategoriesSeeder extends Seeder
@@ -55,6 +56,7 @@ class CategoriesSeeder extends Seeder
             $parentId = DB::table('categories')->insertGetId([
                 'parent_id' => null, // Top-level
                 'title' => $parentTitle,
+                'slug' => Str::slug($parentTitle),
                 'description' => "Master skills in the field of {$parentTitle}.",
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -65,6 +67,7 @@ class CategoriesSeeder extends Seeder
                 DB::table('categories')->insert([
                     'parent_id' => $parentId, // Links to parent numerical ID
                     'title' => $childTitle,
+                    'slug' => Str::slug($childTitle),
                     'description' => "In-depth courses specializing in {$childTitle}.",
                     'created_at' => $now,
                     'updated_at' => $now,

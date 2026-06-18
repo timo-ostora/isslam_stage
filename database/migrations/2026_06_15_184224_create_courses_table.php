@@ -15,15 +15,32 @@ return new class extends Migration
 
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique();
-            $table->foreignId('category_id')->constrained();
-            $table->foreignId('creator_id')->constrained('users');
             $table->string('title');
-            $table->string('description');
-            $table->string('thumbnail_url')->nullable();
-            $table->enum('status', ["draft","published","archived"])->default('draft');
-            $table->enum('difficulty_level', ["easy","medium","hard"]);
-            $table->string('language')->default('en');
+            $table->string('slug')
+                ->unique();
+            $table->string('description')
+                ->nullable();
+            $table->string('thumbnail_url')
+                ->nullable();
+            $table->enum('status', ["draft","published","archived"])
+                ->default('draft');
+            
+            $table->foreignId('category_id')
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('creator_id')
+                ->constrained('users')
+                ->onDelete('cascade');
+
+            $table->integer('duration_seconds')->nullable();
+
+            $table->enum('difficulty_level', ["easy","medium","hard"])
+                ->default('easy');
+
+            $table->string('language')
+                ->default('en');
+                
             $table->timestamps();
             $table->softDeletes();
         });

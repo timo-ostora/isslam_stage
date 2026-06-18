@@ -47,14 +47,25 @@ class User extends Authenticatable implements PasskeyUser
         ->whereNull('enrollments.deleted_at'); // Handles pivot soft deletes
     }
 
+    public function createdCourses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'creator_id');
+
+    }
+
     
-    public function enrollments(): HasMany
+    public function enrollments(): hasMany
     {
         return $this->hasMany(Enrollment::class, 'user_id');
     }
 
-    // public function attempts(): HasMany
-    // {
-    //     return $this->hasMany(Attempt::class);
-    // }
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(Attempt::class);
+    }
+
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

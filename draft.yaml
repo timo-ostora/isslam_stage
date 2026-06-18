@@ -17,7 +17,7 @@ models:
 #       # Course relationship via created_by — handled by foreign key below
 
   # ─────────────────────────────────────────
-  # CATEGORIES (self-referential)
+  # CATEGORIES - valid
   # ─────────────────────────────────────────
   Category:
     parent_id: id foreign:categories nullable
@@ -33,19 +33,22 @@ models:
   # ─────────────────────────────────────────
   Course:
     slug: string unique
+    
     category_id: id foreign:categories
     creator_id: id foreign:users
+
     title: string
     description: string
     thumbnail_url: string nullable
     status: enum:draft,published,archived default:draft
     difficulty_level: enum:easy,medium,hard
     language: string default:en
+
     timestamps: true
     softDeletes: true
     relationships:
       belongsTo: Category, User:creator
-      hasMany: Module, Enrollment, Certificate, User
+      hasMany: Module, Enrollment, Certificate
 
   # ─────────────────────────────────────────
   # ENROLLMENTS
@@ -62,7 +65,7 @@ models:
       - unique: user_id, course_id
       - index: user_id, status
     relationships:
-      belongsToMany: User, Course
+      belongsTo: User, Course
 
   # ─────────────────────────────────────────
   # MODULES

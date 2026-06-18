@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lesson extends Model
@@ -41,13 +42,13 @@ class Lesson extends Model
         ];
     }
 
-    public function moduleItems(): MorphMany
+    public function module(): MorphOne
     {
-        return $this->morphMany(ModuleItem::class, 'moduleitemable');
+        return $this->morphOne(Module::class, 'itemable');
     }
 
-    public function lessonProgresses(): HasMany
-    {
-        return $this->hasMany(LessonProgress::class);
-    }
+    // public function lessonProgresses(): HasMany
+    // {
+    //     return $this->hasMany(LessonProgress::class);
+    // }
 }
