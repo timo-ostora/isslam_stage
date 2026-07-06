@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Courses\RelationManagers;
 
 use App\Filament\Resources\Modules\ModuleResource;
+use App\Filament\Resources\Courses\CourseResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 
@@ -18,6 +20,9 @@ class ModulesRelationManager extends RelationManager
         return $table
             ->headerActions([
                 CreateAction::make(),
+                // Action::make('createModule')
+                //     ->label('Ajouter un module')
+                //     ->url(fn ($record) => CourseResource::getUrl('create', ['course_id' => $record->id]))
             ]);
     }
 }

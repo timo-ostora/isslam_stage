@@ -10,6 +10,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -31,20 +32,52 @@ class CoursesTable
                     ->searchable(),
                 ImageColumn::make('thumbnail_url')
                     ->label('Thumbnail')
-                    ->disk('public') 
+                    ->visibility('private')
                     ->toggleable(),
+                    
                 TextColumn::make('title')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('category.title')
                     ->label('Category')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
+                BadgeColumn::make('difficulty_level')
+                    ->label('defficulty')
+                    ->colors([
+                        'warning' => 'medium',
+                        'success' => 'easy',
+                        'danger' => 'hard',
+                    ])
+                    ->toggleable(),
+                BadgeColumn::make('status')
+                    ->colors([
+                        'secondary' => 'draft',
+                        'success' => 'published',
+                        'warning' => 'archived',
+                    ])
+                    ->toggleable(),
+                textColumn::make('duration_seconds')
+                    ->label('duration')
+                    ->prefix('s')
+                    ->toggleable(),
+                TextColumn::make('modules_count')
+                    ->counts('modules')
+                    ->label('modules')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('enrollments_count')
-                    ->counts('enrollees')
+                    ->counts('enrollments')
                     ->label('Enrollment')
-                    ->toggleable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('certificates_count')
+                    ->counts('certificates')
+                    ->label('certificates')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

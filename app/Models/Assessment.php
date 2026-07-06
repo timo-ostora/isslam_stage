@@ -12,11 +12,6 @@ class Assessment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'title',
         'description',
@@ -26,33 +21,38 @@ class Assessment extends Model
         'max_attempts',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'duration_seconds' => 'integer',
-            'passing_score' => 'integer',
-            'max_attempts' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'duration_seconds' => 'integer',
+        'passing_score'    => 'integer',
+        'max_attempts'     => 'integer',
+        'type'             => 'string',
+    ];
 
-    public function module(): MorphOne
+    /**
+     * Inverse of ModuleItem::itemable() MorphTo.
+     */
+    public function moduleItem(): MorphOne
     {
-        return $this->morphOne(Module::class, 'itemable');
+        return $this->morphOne(ModuleItem::class, 'itemable');
     }
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class)->orderBy('position');
     }
 
     public function attempts(): HasMany
     {
         return $this->hasMany(Attempt::class);
+    }
+
+    public function getTotalPointsAttribute(): int
+    {
+        return $this->questions()->sum('points');
+    }
+
+    public function isPassing(int $score): bool
+    {
+        return $score >= $this->passing_score;
     }
 }

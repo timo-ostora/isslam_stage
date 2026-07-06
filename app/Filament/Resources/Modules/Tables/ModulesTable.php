@@ -18,12 +18,17 @@ class ModulesTable
         return $table
             ->columns([
                 TextColumn::make('course.title')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('order_index')
+                TextColumn::make('description')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('position')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

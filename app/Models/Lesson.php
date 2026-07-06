@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,11 +11,6 @@ class Lesson extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'title',
         'description',
@@ -28,27 +21,29 @@ class Lesson extends Model
         'duration_seconds',
     ];
 
+    protected $casts = [
+        'metadata'         => 'array',
+        'duration_seconds' => 'integer',
+        'type'             => 'string',
+    ];
+
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Inverse of ModuleItem::itemable() MorphTo.
      */
-    protected function casts(): array
+    public function moduleItem(): MorphOne
     {
-        return [
-            'id' => 'integer',
-            'metadata' => 'array',
-            'duration_seconds' => 'integer',
-        ];
+        return $this->morphOne(ModuleItem::class, 'itemable');
     }
 
-    public function module(): MorphOne
+    public function hasUrl(): bool
     {
-        return $this->morphOne(Module::class, 'itemable');
+        return !empty($this->content_url);
     }
 
-    // public function lessonProgresses(): HasMany
-    // {
-    //     return $this->hasMany(LessonProgress::class);
-    // }
+    public function getFormattedDurationAttribute(): string
+    {
+        $m = intdiv($this->duration_seconds ?? 0, 60);
+        $s = ($this->duration_seconds ?? 0) % 60;
+        return sprintf('%d:%02d', $m, $s);
+    }
 }

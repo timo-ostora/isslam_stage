@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,41 +10,40 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Question extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
+        'assessment_id',
         'question_text',
+        'type',
         'points',
         'position',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'position' => 'integer',
-            'points' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'assessment_id' => 'integer',
+        'points'        => 'integer',
+        'position'      => 'integer',
+        'type'          => 'string',
+    ];
 
-    public function Assessment(): BelongsTo
+    public function assessment(): BelongsTo
     {
         return $this->belongsTo(Assessment::class);
     }
 
     public function options(): HasMany
     {
-        return $this->hasMany(QuestionOptions::class);
+        return $this->hasMany(QuestionOption::class);
     }
 
+    public function correctOptions(): HasMany
+    {
+        return $this->hasMany(QuestionOption::class)->where('is_correct', true);
+    }
+
+    public function attemptAnswers(): HasMany
+    {
+        return $this->hasMany(AttemptAnswer::class);
+    }
 }

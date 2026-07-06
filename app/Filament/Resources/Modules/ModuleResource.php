@@ -40,7 +40,8 @@ class ModuleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ModuleItemRelationManager::class,
+            // RelationManagers\Modu leItemRelationManager::class,
+            RelationManagers\ModuleItemsRelationManager::class,
         ];
     }
 

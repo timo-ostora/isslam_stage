@@ -13,40 +13,30 @@ class Course extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'slug',
         'category_id',
         'creator_id',
         'title',
+        'slug',
         'description',
         'thumbnail_url',
         'status',
+        'duration_seconds',
         'difficulty_level',
         'language',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'category_id' => 'integer',
-            'creator_id' => 'integer',
-        ];
-    }
+    protected $casts = [
+        'category_id'      => 'integer',
+        'creator_id'       => 'integer',
+        'duration_seconds' => 'integer',
+        'status'           => 'string',
+        'difficulty_level' => 'string',
+    ];
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     public function creator(): BelongsTo
@@ -56,16 +46,36 @@ class Course extends Model
 
     public function modules(): HasMany
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Module::class)->orderBy('position');
     }
 
-    public function enrollees(): BelongsToMany
+    public function enrollments(): HasMany
     {
-        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'user_id');
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'enrollments')
+            ->withPivot(['status', 'progress_percentage', 'completed_at'])
+            ->withTimestamps();
     }
 
     public function certificates(): HasMany
     {
         return $this->hasMany(Certificate::class);
+    }
+
+    public function getFormattedDurationAttribute(): string
+    {
+        $seconds = $this->duration_seconds ?? 0;
+        $h = intdiv($seconds, 3600);
+        $m = intdiv($seconds % 3600, 60);
+        return $h > 0 ? "{$h}h {$m}m" : "{$m}m";
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === 'published';
     }
 }

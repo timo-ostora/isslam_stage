@@ -41,7 +41,7 @@ class CourseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\EnrolleesRelationManager::class,
+            // RelationManagers\EnrolleesRelationManager::class,
             RelationManagers\ModulesRelationManager::class,
         ];
     }

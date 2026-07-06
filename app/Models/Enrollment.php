@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Enrollment extends Pivot
+class Enrollment extends Model
 {
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'user_id',
         'course_id',
@@ -22,21 +19,13 @@ class Enrollment extends Pivot
         'completed_at',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'id' => 'integer',
-            'user_id' => 'integer',
-            'course_id' => 'integer',
-            'progress_percentage' => 'decimal:2',
-            'completed_at' => 'timestamp',
-        ];
-    }
+    protected $casts = [
+        'user_id'             => 'integer',
+        'course_id'           => 'integer',
+        'status'              => 'string',
+        'progress_percentage' => 'decimal:2',
+        'completed_at'        => 'datetime',
+    ];
 
     public function user(): BelongsTo
     {
@@ -46,5 +35,15 @@ class Enrollment extends Pivot
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === 'completed';
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
     }
 }

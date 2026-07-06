@@ -6,33 +6,36 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'parent_id',
         'title',
+        'slug',
         'description',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'parent_id' => 'integer',
+    ];
+
+    public function parent(): BelongsTo
     {
-        return [
-            'id' => 'integer',
-            'parent_id' => 'integer',
-        ];
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function childrenRecursive(): HasMany
+    {
+        return $this->children()->with('childrenRecursive');
     }
 
     public function courses(): HasMany
@@ -40,13 +43,8 @@ class Category extends Model
         return $this->hasMany(Course::class);
     }
 
-    public function childrens(): HasMany
+    public function isRoot(): bool
     {
-        return $this->hasMany(Category::class);
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
+        return is_null($this->parent_id);
     }
 }

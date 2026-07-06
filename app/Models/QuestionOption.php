@@ -8,29 +8,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Module extends Model
+class QuestionOption extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'course_id',
-        'title',
-        'description',
-        'position',
+        'question_id',
+        'option_text',
+        'is_correct',
     ];
 
     protected $casts = [
-        'course_id' => 'integer',
-        'position'  => 'integer',
+        'question_id' => 'integer',
+        'is_correct'  => 'boolean',
     ];
 
-    public function course(): BelongsTo
+    public function question(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Question::class);
     }
 
-    public function moduleItems(): HasMany
+    public function attemptAnswers(): HasMany
     {
-        return $this->hasMany(ModuleItem::class)->orderBy('position');
+        return $this->hasMany(AttemptAnswer::class);
     }
 }

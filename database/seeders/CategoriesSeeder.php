@@ -17,7 +17,7 @@ class CategoriesSeeder extends Seeder
     {
          $now = Carbon::now();
 
-        // Define LMS data structure: Level 1 (Parents) => Level 2 (Children)
+        
         $lmsStructure = [
             'Web Development' => [
                 'Frontend Development',
@@ -52,9 +52,9 @@ class CategoriesSeeder extends Seeder
         ];
 
         foreach ($lmsStructure as $parentTitle => $childrenTitles) {
-            // 1. Insert Parent Category and get its auto-incremented ID
+            // Insert Parent Category and get its auto-incremented ID
             $parentId = DB::table('categories')->insertGetId([
-                'parent_id' => null, // Top-level
+                'parent_id' => null, // root
                 'title' => $parentTitle,
                 'slug' => Str::slug($parentTitle),
                 'description' => "Master skills in the field of {$parentTitle}.",
@@ -62,7 +62,7 @@ class CategoriesSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            // 2. Insert Child Categories (Level 2)
+            // Insert Child Categories (Level 2)
             foreach ($childrenTitles as $childTitle) {
                 DB::table('categories')->insert([
                     'parent_id' => $parentId, // Links to parent numerical ID

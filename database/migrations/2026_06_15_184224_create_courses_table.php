@@ -26,8 +26,7 @@ return new class extends Migration
                 ->default('draft');
             
             $table->foreignId('category_id')
-                ->constrained()
-                ->nullOnDelete();
+                ->constrained();
 
             $table->foreignId('creator_id')
                 ->constrained('users')
