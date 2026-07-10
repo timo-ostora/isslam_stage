@@ -1,0 +1,35 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Target the sidebar class specifically */
+.fi-sidebar {
+    /* Use !important to safely override compiled vendor utilities */
+    @apply bg-white dark:bg-black border-r border-gray-300 dark:border-gray-700; 
+}
+
+/* Target the inner navigation scrolling element of the sidebar */
+html, .fi-sidebar-nav {
+    /* Tailwind CSS v4 native scrollbar utilities */
+    @apply scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent;
+
+    /* Cross-browser layout fallback overrides */
+    &::-webkit-scrollbar {
+        width: 6px; /* Makes the scrollbar sleek and thin */
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent; /* Seamless integration with sidebar bg */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--gray-300); /* Follows your main theme color variables */
+        border-radius: 9999px; /* Smooth pill shape design */
+        
+        /* Dark mode WebKit adjustment */
+        @media (prefers-color-scheme: dark) {
+            background-color: var(--gray-700);
+        }
+    }
+}
