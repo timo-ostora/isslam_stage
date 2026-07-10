@@ -29,6 +29,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use Override;
+use UnitEnum;
 
 class RoleResource extends Resource
 {
@@ -38,6 +39,8 @@ class RoleResource extends Resource
     use Essentials\HasLabels;
     use Essentials\HasNavigation;
     use HasShieldFormComponents;
+
+    protected static string|UnitEnum|null  $navigationGroup = 'Shield Management'; 
 
 
     protected static ?string $recordTitleAttribute = 'name';

@@ -29,9 +29,23 @@ class AdminpanelPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->colors([
-                'primary' => Color::Blue,
-                'gray' => Color::Slate,
+                'primary' => Color::Slate,
+                'danger' => Color::Rose,
+                'gray' => Color::Zinc,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'info' => Color::Sky,
             ])
+            ->font('Inter') 
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                'Content Management',
+                'User Management',
+            ])
+            ->maxContentWidth('full')
+            ->breadcrumbs(true)
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -54,7 +68,10 @@ class AdminpanelPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                    ->navigationGroup('User Management') 
+                    ->navigationIcon('heroicon-o-shield-check')
+                    ->navigationSort(2),
             ])
             ->authMiddleware([
                 Authenticate::class,

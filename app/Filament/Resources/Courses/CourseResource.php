@@ -22,11 +22,14 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
+
 
     protected static ?string $recordTitleAttribute = 'Course';
 
-    protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
+    protected static string|UnitEnum|null  $navigationGroup = 'Content Management';
+    
+    protected static ?int $navigationSort = 2; 
 
     public static function form(Schema $schema): Schema
     {

@@ -23,9 +23,11 @@ class CategoryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Category';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     protected static string|UnitEnum|null  $navigationGroup = 'Content Management';
+
+    protected static ?int $navigationSort = 1; 
 
     public static function form(Schema $schema): Schema
     {

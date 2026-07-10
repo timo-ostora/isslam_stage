@@ -39,81 +39,82 @@ class ModuleItemsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Select::make('itemable_type')
-                    ->label('Content Type')
-                    ->options([
-                        Lesson::class     => 'Lesson',
-                        Assessment::class => 'Assessment',
-                    ])
-                    ->required()
-                    ->live()
-                    ->native(false),
+                // Select::make('itemable_type')
+                //     ->label('Content Type')
+                //     ->options([
+                //         Lesson::class     => 'Lesson',
+                //         Assessment::class => 'Assessment',
+                //     ])
+                //     ->required()
+                //     ->live()
+                //     ->native(false),
 
 
-                Section::make()
-                    ->schema(fn (Get $get) => match ($get('itemable_type')) {
+                // Section::make()
+                //     ->schema(fn (Get $get) => match ($get('itemable_type')) {
 
 
-                        // lesson type selected, show the lesson fields
-                        Lesson::class => [
+                //         // lesson type selected, show the lesson fields
+                //         Lesson::class => [
 
-                            TextInput::make('title')
-                                ->required(),
+                //             TextInput::make('title')
+                //                 ->required(),
                             
-                            Textarea::make('description')
-                                ->required(),
+                //             Textarea::make('description')
+                //                 ->required(),
                             
-// Select the content type for the lesson
-Select::make('type')
-    ->label('Content Type')
-    ->options([
-        'article' => 'Article',
-        'video' => 'Video',
-        'pdf' => 'PDF',
-        'link' => 'Link',
-    ])
-    ->default('article')
-    ->required()
-    ->live(), // Crucial: Makes the form re-render instantly when changed
+                //             // Select the content type for the lesson
+                //             Select::make('type')
+                //                 ->label('Content Type')
+                //                 ->options([
+                //                     'article' => 'Article',
+                //                     'video' => 'Video',
+                //                     'pdf' => 'PDF',
+                //                     'link' => 'Link',
+                //                 ])
+                //                 ->default('article')
+                //                 ->required()
+                //                 ->live(), // Crucial: Makes the form re-render instantly when changed
 
-// Show if content type is video, pdf, or link
-TextInput::make('content_url')
-    ->label('Content URL')
-    ->nullable()
-    ->visible(fn (get $get): bool => in_array($get('type'), ['video', 'pdf', 'link'])),
+                //             // Show if content type is video, pdf, or link
+                //             TextInput::make('content_url')
+                //                 ->label('Content URL')
+                //                 ->nullable()
+                //                 ->visible(fn (get $get): bool => in_array($get('type'), ['video', 'pdf', 'link'])),
 
-// Show if content type is article
-Textarea::make('content_text')
-    ->label('Content Text')
-    ->nullable()
-    ->visible(fn (get $get): bool => $get('type') === 'article'),
+                //             // Show if content type is article
+                //             Textarea::make('content_text')
+                //                 ->label('Content Text')
+                //                 ->nullable()
+                //                 ->visible(fn (get $get): bool => $get('type') === 'article'),
 
-TextInput::make('duration_seconds')
-    ->label('Duration (seconds)')
-    ->numeric()
-    ->default(0),
-                            ],
+                //             TextInput::make('duration_seconds')
+                //                 ->label('Duration (seconds)')
+                //                 ->numeric()
+                //                 ->default(0),
+                //             ],
 
                         
-                        // assessment type selected, show the assessment fields
-                        Assessment::class => [
-                            TextInput::make('title')
-                                ->required(),
+                //         // assessment type selected, show the assessment fields
+                //         Assessment::class => [
+                //             TextInput::make('title')
+                //                 ->required(),
 
-                            TextInput::make('passing_score')
-                                ->numeric()
-                                ->required(),
-                        ],
+                //             TextInput::make('passing_score')
+                //                 ->numeric()
+                //                 ->required(),
+                //         ],
 
-                        default => [],
-                    }),
+                //         default => [],
+                //     }),
                 
-                    TextInput::make('position')
-                        ->label('Position')
-                        ->numeric()
-                        ->default(1)
-                        ->required(),
-            ]);
+                //     TextInput::make('position')
+                //         ->label('Position')
+                //         ->numeric()
+                //         ->default(1)
+                //         ->required(),
+            
+        ]);
     }
 
     public function table(Table $table): Table

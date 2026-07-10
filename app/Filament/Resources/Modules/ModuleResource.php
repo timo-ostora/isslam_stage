@@ -21,9 +21,11 @@ class ModuleResource extends Resource
 {
     protected static ?string $model = Module::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
+
+    protected static ?int $navigationSort = 3; 
 
     protected static ?string $recordTitleAttribute = 'Module';
 
@@ -41,7 +43,7 @@ class ModuleResource extends Resource
     {
         return [
             // RelationManagers\Modu leItemRelationManager::class,
-            RelationManagers\ModuleItemsRelationManager::class,
+            // RelationManagers\ModuleItemsRelationManager::class,
         ];
     }
 

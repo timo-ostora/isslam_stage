@@ -21,9 +21,11 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
+
+    protected static ?int $navigationSort = 5; 
 
     protected static ?string $recordTitleAttribute = 'Assessment';
 

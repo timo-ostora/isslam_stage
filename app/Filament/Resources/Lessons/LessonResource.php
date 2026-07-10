@@ -21,9 +21,11 @@ class LessonResource extends Resource
 {
     protected static ?string $model = Lesson::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-play-circle';
 
     protected static string|UnitEnum|null  $navigationGroup = 'Content Management'; 
+    
+    protected static ?int $navigationSort = 4; 
 
     protected static ?string $recordTitleAttribute = 'Lesson';
 
