@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * MIGRATION FIX REQUIRED:
- * Change $table->timestamp('started_id') → $table->timestamp('started_at')
- */
+
 class Attempt extends Model
 {
     use HasFactory, SoftDeletes;
@@ -21,19 +18,21 @@ class Attempt extends Model
         'assessment_id',
         'score',
         'passed',
-        'started_at',
+        'started_at', // replaced with created_at
         'submitted_at',
         'time_taken_seconds',
+        'questions_snapshot',
     ];
 
     protected $casts = [
-        'user_id'            => 'integer',
-        'assessment_id'      => 'integer',
-        'score'              => 'integer',
-        'passed'             => 'boolean',
-        'started_at'         => 'datetime',
-        'submitted_at'       => 'datetime',
-        'time_taken_seconds' => 'integer',
+        'user_id'             => 'integer',
+        'assessment_id'       => 'integer',
+        'score'               => 'integer',
+        'passed'              => 'boolean',
+        'started_at'          => 'datetime', // replaced with created_at
+        'submitted_at'        => 'datetime',
+        'time_taken_seconds'  => 'integer',
+        'questions_snapshot'  => 'array',
     ];
 
     public function user(): BelongsTo
@@ -49,6 +48,11 @@ class Attempt extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(AttemptAnswer::class);
+    }
+
+    public function isInProgress(): bool
+    {
+        return is_null($this->submitted_at);
     }
 
     public function getFormattedTimeTakenAttribute(): string

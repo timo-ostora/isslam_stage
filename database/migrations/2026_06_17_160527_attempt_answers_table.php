@@ -15,11 +15,21 @@ return new class extends Migration
 
         Schema::create('attempt_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attempt_id')->constrained();
+
+            $table->foreignId('attempt_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->foreignId('question_id')->constrained();
-            $table->foreignId('question_option_id')->constrained();
+
+            // Snapshotted at grading time so later edits to question_options
+            // don't retroactively change a graded answer.
+            $table->boolean('is_correct')->nullable();
+            $table->unsignedInteger('points_awarded')->default(0);
+
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['attempt_id', 'question_id']);
         });
 
         Schema::enableForeignKeyConstraints();

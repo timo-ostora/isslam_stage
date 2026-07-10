@@ -8,38 +8,41 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
- * Generates every Filament Shield permission (view_any, view, create,
- * update, delete, delete_any, force_delete, force_delete_any, restore,
- * restore_any, reorder) for every registered Filament resource + page.
+ * Generates every Filament Shield permission for every registered Filament
+ * resource + page. Mirrors `php artisan shield:generate --all`.
  *
- * This mirrors what `php artisan shield:generate --all` does at runtime,
- * so the seeder is safe to re-run (uses firstOrCreate).
+ * IMPORTANT: this list must match the resources you actually register in
+ * app/Filament/Resources — including ones hidden from navigation (e.g.
+ * ModuleResource), since Shield generates permissions per-Resource-class,
+ * not per-nav-item. It must NOT include models that only ever appear as
+ * relation-manager content (Question, QuestionOption, ModuleItem,
+ * AttemptAnswer, AttemptAnswerOption) — those have no standalone Resource
+ * and are gated by their parent resource's permissions instead.
+ *
+ * FIX vs. original: removed 'assignment', 'quiz', 'quiz_attempt', 'tag'
+ * (none of these models exist in the schema) and added the real resources:
+ * 'module', 'assessment', 'attempt', 'certificate'.
  */
 class ShieldPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // Reset cached roles & permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $guard = Utils::getFilamentAuthGuard(); // usually 'web'
 
-        // ── Resources ────────────────────────────────────────────────────────
-        // List every Filament resource slug you have (or will have).
-        // Shield derives permission names from these automatically.
         $resources = [
+            'category',
             'course',
             'module',
             'lesson',
-            'assignment',
-            'quiz',
-            'quiz_attempt',
+            'assessment',
             'enrollment',
-            'category',
-            'tag',
+            'attempt',
+            'certificate',
             'user',
-            'role',              // Shield's own role resource
-            'permission',       // Shield's own permission resource
+            'role',       // Shield's own role resource
+            'permission', // Shield's own permission resource
         ];
 
         $resourceActions = [
@@ -64,8 +67,6 @@ class ShieldPermissionsSeeder extends Seeder
             }
         }
 
-        // ── Custom Pages / Widgets ────────────────────────────────────────────
-        // Shield uses the prefix `page_` for pages and `widget_` for widgets.
         $pages = [
             'page_Dashboard',
         ];

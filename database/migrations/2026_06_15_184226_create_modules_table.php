@@ -15,12 +15,16 @@ return new class extends Migration
 
         Schema::create('modules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
+            $table->foreignId('course_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedInteger('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['course_id', 'position']);
         });
 
         Schema::enableForeignKeyConstraints();

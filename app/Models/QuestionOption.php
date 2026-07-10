@@ -28,8 +28,19 @@ class QuestionOption extends Model
         return $this->belongsTo(Question::class);
     }
 
-    public function attemptAnswers(): HasMany
+    /**
+     * Join rows recording every time this option was selected as part of an answer.
+     */
+    public function attemptAnswerOptions(): HasMany
     {
-        return $this->hasMany(AttemptAnswer::class);
+        return $this->hasMany(AttemptAnswerOption::class);
+    }
+ 
+    public function attemptAnswers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            AttemptAnswer::class,
+            'attempt_answer_options'
+        )->withTimestamps();
     }
 }

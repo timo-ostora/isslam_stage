@@ -57,8 +57,10 @@ class Course extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'enrollments')
-            ->withPivot(['status', 'progress_percentage', 'completed_at'])
-            ->withTimestamps();
+            ->using(Enrollment::class)
+            ->withPivot(['id', 'status', 'progress_percentage', 'completed_at'])
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
     }
 
     public function certificates(): HasMany

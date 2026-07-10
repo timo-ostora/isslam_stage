@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Certificate extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
-        /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -19,7 +20,7 @@ class Certificate extends Model
         'user_id',
         'course_id',
         'certificate_number',
-        'issued_at'
+        'issued_at',
     ];
 
     /**
@@ -31,7 +32,7 @@ class Certificate extends Model
     {
         return [
             'certificate_number' => 'string',
-            'issued_at' => 'timestamp',
+            'issued_at' => 'datetime',
         ];
     }
 

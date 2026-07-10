@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('assessment_id')
-                ->constrained();
+                ->constrained()
+                ->cascadeOnDelete();
 
             $table->string('question_text', 255);
             $table->enum('type', ['single_choice','multiple_choice','true_false']);
@@ -26,6 +27,8 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['assessment_id', 'position']);
         });
 
         Schema::enableForeignKeyConstraints();

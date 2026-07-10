@@ -3,13 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Enrollment extends Model
+
+
+
+class Enrollment extends Pivot
 {
     use HasFactory, SoftDeletes;
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
+    protected $table = 'enrollments';
 
     protected $fillable = [
         'user_id',
