@@ -9,6 +9,10 @@
     @apply bg-white dark:bg-black border-r border-gray-300 dark:border-gray-700; 
 }
 
+.fi-topbar {
+    @apply bg-white dark:bg-black border-b border-gray-300 dark:border-gray-700 py-2;
+}
+
 /* Target the inner navigation scrolling element of the sidebar */
 html, .fi-sidebar-nav {
     /* Tailwind CSS v4 native scrollbar utilities */

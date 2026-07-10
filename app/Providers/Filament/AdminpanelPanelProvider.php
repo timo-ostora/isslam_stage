@@ -36,6 +36,9 @@ class AdminpanelPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
                 'info' => Color::Sky,
             ])
+            ->brandName('Online education')
+            ->brandLogo(asset('logo.png'))
+            ->brandLogoHeight('3rem')
             ->font('Inter') 
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([

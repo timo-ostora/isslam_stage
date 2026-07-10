@@ -22,78 +22,114 @@ class CourseForm
     {
         return $schema->components([
 
-                        Section::make('Basic Information')
-                            ->columns(2)
-                            ->schema([
-                                TextInput::make('title')
-                                    ->required()
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-                                        $set('slug', str($state)->slug()))
-                                    ->columnSpan(2),
+            Section::make('Basic Information')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn ($state, Forms\Set $set) =>
+                            $set('slug', str($state)->slug())),
 
-                                TextInput::make('slug')
-                                    ->required()
-                                    ->unique(ignoreRecord: true)
-                                    ->columnSpan(2),
+                    TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true),
 
-                                Select::make('creator_id')
-                                    ->label('Instructor / Creator')
-                                    ->relationship('creator', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required(),
+                    Select::make('creator_id')
+                        ->label('Instructor / Creator')
+                        ->relationship('creator', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
 
-                                Select::make('category_id')
-                                    ->relationship('category', 'title')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required(),
+                    Select::make('category_id')
+                        ->relationship('category', 'title')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
 
-                                Textarea::make('description')
-                                    ->rows(4)
-                                    ->columnSpan(2),
+                    Textarea::make('description')
+                        ->rows(4)
+                        ->columnSpan(2),
 
-                                FileUpload::make('thumbnail_url')
-                                    ->label('Thumbnail')
-                                    ->image()
-                                    ->directory('course-thumbnails')
-                                    ->imageEditor()
-                                    ->columnSpan(2),
-                            ]),
+                    // FileUpload::make('thumbnail_url')
+                    //     ->label('Thumbnail')
+                    //     ->image()
+                    //     ->directory('course-thumbnails')
+                    //     ->imageEditor()
+                    //     ->columnSpan(2),
 
-                        Section::make('Classification')
-                            ->columns(3)
-                            ->schema([
-                                // Select::make('status')
-                                //     ->options(CourseStatus::class)
-                                //     ->default('draft')
-                                //     ->native(false)
-                                //     ->required(),
+                    TextInput::make('thumbnail_url')
+                        ->label('Thumbnail URL')
+                        ->url()
+                        ->prefix('url')
+                        ->columnSpan(2),
 
-                                // Select::make('difficulty_level')
-                                //     ->options(DifficultyLevel::class)
-                                //     ->default('easy')
-                                //     ->native(false)
-                                //     ->required(),
+                    TextInput::make('duration_seconds')
+                        ->label('Total Duration (minutes)')
+                        ->numeric()
+                        ->dehydrateStateUsing(fn ($state) => $state * 60)
+                        ->formatStateUsing(fn ($state) => $state ? intdiv($state, 60) : null)
+                        ->suffix('min')
+                        ->required(),
+                    Select::make('language')
+                        ->options([
+                            'en' => 'English',
+                            'fr' => 'French',
+                            'ar' => 'Arabic',
+                        ])
+                        ->required()
+                        ->default('en'),
+                    Select::make('difficulty_level')
+                        ->options([
+                            'easy' => 'Easy',
+                            'medium' => 'Medium',
+                            'hard' => 'Hard',
+                        ])
+                        ->required()
+                        ->default('easy'),
+                    Select::make('status')
+                        ->options([
+                            'draft' => 'Draft',
+                            'published' => 'Published',
+                            'archived' => 'Archived',
+                        ])
+                        ->required()
+                        ->default('draft')
+                ])->columnSpanFull(),
 
-                                // Select::make('language')
-                                //     ->options([
-                                //         'en' => 'English',
-                                //         'fr' => 'French',
-                                //         'ar' => 'Arabic',
-                                //     ])
-                                //     ->native(false)
-                                //     ->required(),
+                        // Section::make('Classification')
+                        //     ->columns(3)
+                        //     ->schema([
+                        //         Select::make('status')
+                        //             ->options(CourseStatus::class)
+                        //             ->default('draft')
+                        //             ->native(false)
+                        //             ->required(),
 
-                                // TextInput::make('duration_seconds')
-                                //     ->label('Total Duration (minutes)')
-                                //     ->numeric()
-                                //     ->dehydrateStateUsing(fn ($state) => $state * 60)
-                                //     ->formatStateUsing(fn ($state) => $state ? intdiv($state, 60) : null)
-                                //     ->suffix('min')
-                                //     ->columnSpan(3),
-                            ]),
+                        //         Select::make('difficulty_level')
+                        //             ->options(DifficultyLevel::class)
+                        //             ->default('easy')
+                        //             ->native(false)
+                        //             ->required(),
+
+                        //         Select::make('language')
+                        //             ->options([
+                        //                 'en' => 'English',
+                        //                 'fr' => 'French',
+                        //                 'ar' => 'Arabic',
+                        //             ])
+                        //             ->native(false)
+                        //             ->required(),
+
+                        //         TextInput::make('duration_seconds')
+                        //             ->label('Total Duration (minutes)')
+                        //             ->numeric()
+                        //             ->dehydrateStateUsing(fn ($state) => $state * 60)
+                        //             ->formatStateUsing(fn ($state) => $state ? intdiv($state, 60) : null)
+                        //             ->suffix('min')
+                        //             ->columnSpan(3),
+                        //     ]),
                     // ])
 
 
