@@ -21,6 +21,7 @@ class LessonsTable
                     ->searchable(),
                 TextColumn::make('description')
                     ->searchable(),
+
                 TextColumn::make('type')
                     ->searchable(),
                 TextColumn::make('content_url')

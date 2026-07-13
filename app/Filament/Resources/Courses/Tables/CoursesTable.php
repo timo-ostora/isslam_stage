@@ -61,7 +61,9 @@ class CoursesTable
                     ->toggleable(),
                 textColumn::make('duration_seconds')
                     ->label('duration')
-                    ->prefix('s')
+                    // ->dehydrateStateUsing(fn ($state) => $state * 60)
+                    ->formatStateUsing(fn ($state) => $state ? intdiv($state, 60) : null)                            
+                    ->suffix('min')
                     ->toggleable(),
                 TextColumn::make('modules_count')
                     ->counts('modules')
