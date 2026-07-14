@@ -10,3 +10,9 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+export function formatDuration(seconds: number): string {
+    let hours = Math.round(seconds / 3600);
+    return `${hours} hrs`;
+}
+

@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Auth;
 
 Route::inertia('/', 'home')->name('home');
 
+// Route::get('/categories', [App\Http\Controllers\CategoryController::class, 'index'])->name('categories.index');
+// Route::get('/categories/{category}', [App\Http\Controllers\CategoryController::class, 'show'])->name('categories.show');
+
+// Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });

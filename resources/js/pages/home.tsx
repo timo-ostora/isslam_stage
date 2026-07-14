@@ -1,28 +1,53 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Head, router } from '@inertiajs/react';
 import { home } from '@/routes';
+import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 
 export default function Home() {
+    let defaultUser = {
+        name: 'User',
+        enrolledCourses: [],
+        completedLessons: [],
+        statistics: {
+            studyHoursThisWeek: 0,
+            completedCourses: 0,
+            averageExamScore: null,
+            weeklyProgress: [],
+        },
+        certificates: [],
+    };
+
+    let user = usePage().props.auth.user || defaultUser;
+
     return (
         <main>
           <Head title="Home" />
 
-           {/*<div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-              <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                  <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                      <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                  </div>
-                  <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                      <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                  </div>
-                  <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                      <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                  </div>
-              </div>
-              <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                  <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-              </div>
-          </div> */}
+            <div 
+                className=" xl:rounded-md xl:my-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-white relative overflow-hidden shadow-xl shadow-blue-500/10"
+            >
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="space-y-2 text-left">
+                        <h2 className="text-2xl md:text-3xl font-bold font-heading">
+                        Welcome back, {user?.name}! 👋
+                        </h2>
+                        <p className="text-slate-100/80 text-sm max-w-md">
+                        You are completing lessons quickly. Keep it up to qualify for your React Architecture certifications!
+                        </p>
+                    </div>
+                    <Button 
+                        variant="secondary"
+                        // className="self-start md:self-auto bg-white hover:bg-slate-50 text-blue-600 border-none font-semibold focus:ring-white"
+                        className="cursor-pointer"
+                        onClick={() => router.visit(home())}
+                    >
+                        Resume Learning
+                        <Play className="h-4 w-4 fill-current" />
+                    </Button>
+                </div>
+            </div>
+
         </main>
     );
 }
