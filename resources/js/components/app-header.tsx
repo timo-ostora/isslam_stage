@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Home, LayoutGrid, Menu, Search } from 'lucide-react';
+import { Home, LayoutGrid, Menu, Play, Search } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -33,7 +33,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
-import categories  from '@/routes/categories';
+// import categories  from '@/routes/categories';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -44,26 +44,23 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Home',
         href: home(),
-        icon: Home,
     },
     {
-        title: 'Categories',
-        href: categories.index(),
-        icon: LayoutGrid,
+        title: 'Courses Catalog',
+        href: '',
+    },
+    {
+        title: 'Our Experts',
+        href: '',
     }
 ];
 
 const rightNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: Folder,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
+    {
+        title: 'Contenue Learning',
+        href: 'https://github.com/laravel/react-starter-kit',
+        icon: Play,
+    },
 ];
 
 const activeItemStyles =
@@ -77,7 +74,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
     return (
         <>
-            <div className="border-b border-sidebar-border/80">
+            <div className="bg-background border-b border-sidebar-border/80">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                     {/* Mobile Menu */}
                     <div className="lg:hidden">

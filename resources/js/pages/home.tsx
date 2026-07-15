@@ -25,7 +25,7 @@ export default function Home() {
           <Head title="Home" />
 
             <div 
-                className=" xl:rounded-md xl:my-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-white relative overflow-hidden shadow-xl shadow-blue-500/10"
+                className=" xl:rounded-md xl:my-4 bg-gradient-to-r from-green-600 via-green-500 to-green-400 p-8 text-white relative overflow-hidden shadow-xl shadow-blue-500/10"
             >
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-2 text-left">

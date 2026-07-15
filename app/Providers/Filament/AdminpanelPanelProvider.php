@@ -29,7 +29,7 @@ class AdminpanelPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->colors([
-                'primary' => Color::Slate,
+                'primary' => '#6fffa9',
                 'danger' => Color::Rose,
                 'gray' => Color::Zinc,
                 'success' => Color::Emerald,

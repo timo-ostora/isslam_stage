@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class CourseController extends Controller
+class CoursesCatalogController extends Controller
 {
 
     /**
@@ -30,12 +31,13 @@ class CourseController extends Controller
 
         $enrollment = null;
 
-        // if ($user = Auth::user()) {
-        //     $enrollment = $course->enrollments()
-        //         ->where('user_id', $user->id)
-        //         ->whereIn('status', ['active', 'completed'])
-        //         ->first();
-        // }
+
+        if ($user = Auth::user()) {
+            $enrollment = $course->enrollments()
+                ->where('user_id', $user->id)
+                ->whereIn('status', ['active', 'completed'])
+                ->first();
+        }
 
         return Inertia::render('courses/show', [
             'course' => $course,
