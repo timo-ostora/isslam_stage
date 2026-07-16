@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,18 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        RedirectIfAuthenticated::redirectUsing(function () {
+            if (auth()->user()?->hasRole('super_admin')) {
+                
+                return url('/admin');
+            }
+            // if (auth()->user()?->hasRole('superadmin') || auth()->user()?->hasPermissionTo('access_panel')) {
+            //     return url('/admin');
+            // }
+
+
+            return url('/');
+        });
     }
 
     /**

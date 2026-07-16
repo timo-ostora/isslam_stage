@@ -35,6 +35,7 @@ import { cn, toUrl } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
 // import categories  from '@/routes/categories';
 import type { BreadcrumbItem, NavItem } from '@/types';
+import courses from '@/routes/courses';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -47,7 +48,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Courses Catalog',
-        href: '',
+        href: courses.index(),
     },
     {
         title: 'Our Experts',

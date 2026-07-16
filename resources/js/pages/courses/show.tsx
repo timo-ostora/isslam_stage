@@ -1,18 +1,40 @@
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Clock, Users, Globe, PlayCircle, FileCheck, Lock } from 'lucide-react';
 
 interface ModuleItem {
     id: number;
     position: number;
-    type: 'lesson' | 'assessment' | 'unknown';
-    title: string | null;
-    duration_seconds: number | null;
+    itemable_type: "App\\Models\\Lesson" | 'App\\Models\\assessment' | 'unknown';
+    itemable: Lesson | Assessment  ;
+}
+interface Lesson {
+    id : number,
+    title : string,
+    description : string,
+    type : string,
+    content_url : string,
+    content_text : string,
+    duration_seconds : number
+}
+interface Assessment {
+    id : number,
+    title : string,
+    description : string,
+    type : string,
+    duration_seconds : number,
+    passing_score : number,
+    max_attempts : number,
 }
 
 interface CourseModule {
     id: number;
     title: string;
     description: string | null;
-    items: ModuleItem[];
+    module_items: ModuleItem[];
 }
 
 interface Course {
@@ -24,6 +46,7 @@ interface Course {
     difficulty_level: 'easy' | 'medium' | 'hard';
     duration: string;
     language: string;
+    students_count?: number;
     category?: { title: string; slug: string };
     creator?: { name: string };
     modules?: CourseModule[];
@@ -38,7 +61,14 @@ interface PageProps {
     course: Course;
     enrollment: Enrollment | null;
     auth: { user: { id: number; name: string } | null };
+    [key: string]: unknown;
 }
+
+const difficultyColor: Record<Course['difficulty_level'], string> = {
+    easy: 'bg-primary/10 text-primary hover:bg-primary/10',
+    medium: 'bg-amber-100 text-amber-700 hover:bg-amber-100',
+    hard: 'bg-rose-100 text-rose-700 hover:bg-rose-100',
+};
 
 function formatDuration(seconds: number | null): string {
     if (!seconds) return '';
@@ -47,152 +77,314 @@ function formatDuration(seconds: number | null): string {
 }
 
 export default function CourseShow() {
-    const { course, enrollment, auth } = usePage<any>().props;
-    const enrollForm = useForm({});
+    const { course, enrollment, auth } = usePage<PageProps>().props;
+    const [enrolling, setEnrolling] = useState(false);
 
     const isEnrolled = enrollment?.status === 'active' || enrollment?.status === 'completed';
 
     function handleEnroll() {
-        // enrollForm.post(router.visit('/enrollments/store/'+{course.slug}), {
-        //     preserveScroll: true,
-        // });
+        setEnrolling(true);
+        router.post(
+            `/courses/${course.slug}/enroll`,
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setEnrolling(false),
+            },
+        );
     }
 
     return (
         <>
             <Head title={course.title} />
 
-            <div className="w-full bg-white px-4 py-10">
-              {/* Header */}
-              <div className="overflow-hidden rounded-xl border border-gray-200">
-                  {course.thumbnail_url && (
-                      <img
-                          src={course.thumbnail_url}
-                          alt={course.title}
-                          className="h-64 w-full object-cover"
-                      />
-                  )}
 
-                  <div className="space-y-4 p-6">
-                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                          {course.category && (
-                              <Link
-                                  href={`categories/show/${course.category.slug}`}
-                                  className="rounded-full bg-gray-100 px-3 py-1 hover:bg-gray-200"
-                              >
-                                  {course.category.title}
-                              </Link>
-                          )}
-                          <span className="rounded-full bg-gray-100 px-3 py-1 capitalize">
-                              {course.difficulty_level}
-                          </span>
-                          <span className="rounded-full bg-gray-100 px-3 py-1">
-                              {course.duration}
-                          </span>
-                          <span className="rounded-full bg-gray-100 px-3 py-1 uppercase">
-                              {course.language}
-                          </span>
-                      </div>
+            <div className="min-h-screen bg-background">
+                <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        
+                    <Card className="overflow-hidden py-0">
+                        
+                        {course.thumbnail_url && (
+                            <div className="aspect-[16/6] w-full overflow-hidden bg-muted">
+                                <img
+                                    src={course.thumbnail_url}
+                                    alt={course.title}
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        )}
 
-                      <h1 className="text-3xl font-bold text-gray-900">{course.title}</h1>
+                        <div className="space-y-4 p-6">
+                            <div className="flex flex-wrap items-center gap-2">
+                                {course.category && (
+                                    <Link href={`/categories/${course.category.slug}`}>
+                                        <Badge variant="secondary" className="font-normal">
+                                            {course.category.title}
+                                        </Badge>
+                                    </Link>
+                                )}
+                                <Badge className={`font-normal capitalize ${difficultyColor[course.difficulty_level]}`}>
+                                    {course.difficulty_level}
+                                </Badge>
+                                <span className="flex items-center gap-1.5 uppercase">
+                                    <Globe className="h-4 w-4" />
+                                    {course.language}
+                                </span>
+                                {/* <span className="flex items-center gap-1.5">
+                                    <Clock className="h-4 w-4" />
+                                    {course.duration}
+                                </span> */}
+                            </div>
 
-                      {course.creator && (
-                          <p className="text-sm text-gray-500">
-                              Created by <span className="font-medium">{course.creator.name}</span>
-                          </p>
-                      )}
+                            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                                {course.title}
+                            </h1>
 
-                      <p className="text-gray-700">{course.description}</p>
+                            {course.creator && (
+                                <p className="text-sm text-muted-foreground">
+                                    Created by <span className="font-medium text-foreground">{course.creator.name}</span>
+                                </p>
+                            )}
 
-                      {/* Enrollment CTA */}
-                      <div className="pt-2">
-                          {!auth.user ? (
-                              <Link
-                                  href={'auth/login'}
-                                  className="inline-block rounded-lg bg-gray-900 px-5 py-2.5 text-white hover:bg-gray-700"
-                              >
-                                  Log in to enroll
-                              </Link>
-                          ) : isEnrolled ? (
-                              <div className="space-y-2">
-                                  <Link
-                                      href={`learning/show/${course.slug}`}
-                                      className="inline-block rounded-lg bg-gray-900 px-5 py-2.5 text-white hover:bg-gray-700"
-                                  >
-                                      {enrollment?.status === 'completed' ? 'Review Course' : 'Continue Learning'}
-                                  </Link>
-                                  {enrollment && enrollment.status === 'active' && (
-                                      <div className="h-2 w-full max-w-xs overflow-hidden rounded-full bg-gray-100">
-                                          <div
-                                              className="h-full rounded-full bg-gray-900"
-                                              style={{ width: `${enrollment.progress_percentage}%` }}
-                                          />
-                                      </div>
-                                  )}
-                              </div>
-                          ) : (
-                              <button
-                                  onClick={handleEnroll}
-                                  disabled={enrollForm.processing}
-                                  className="rounded-lg bg-gray-900 px-5 py-2.5 text-white hover:bg-gray-700 disabled:opacity-50"
-                              >
-                                  {enrollForm.processing ? 'Enrolling…' : 'Enroll for free'}
-                              </button>
-                          )}
-                      </div>
-                  </div>
-              </div>
+                            <p className="text-foreground/90">{course.description}</p>
 
-              {/* Syllabus */}
-              <div className="mt-10">
-                  <h2 className="mb-4 text-xl font-semibold text-gray-900">Course content</h2>
+                            
+                            <div className="pt-2">
+                                {!auth.user ? (
+                                    <Button asChild>
+                                        <Link href="/login">Log in to enroll</Link>
+                                    </Button>
+                                ) : isEnrolled ? (
+                                    <div className="space-y-3">
+                                        <Button asChild>
+                                            <Link href={`/learn/${course.slug}`}>
+                                                {enrollment?.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+                                            </Link>
+                                        </Button>
+                                        {enrollment && enrollment.status === 'active' && (
+                                            <div className="h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted">
+                                                <div
+                                                    className="h-full rounded-full bg-primary transition-all"
+                                                    style={{ width: `${enrollment.progress_percentage}%` }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Button onClick={handleEnroll} disabled={enrolling}>
+                                        {enrolling ? 'Enrolling…' : 'Enroll for free'}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </Card>
+                    
+                    <div className="mt-10">
+                        <h2 className="mb-4 text-xl font-semibold text-foreground">Course content</h2>
 
-                  <div className="space-y-4">
-                    <pre>{course.modules}</pre>
-                      {/* {course.modules?.map((module: any) => (
-                          // <div key={module.id} className="rounded-lg border border-gray-200">
-                          //     <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
-                          //         <h3 className="font-medium text-gray-900">{module.title}</h3>
-                          //         {module.description && (
-                          //             <p className="mt-1 text-sm text-gray-500">{module.description}</p>
-                          //         )}
-                          //     </div>
+                        <div className="space-y-4">
+                            {course.modules?.map((module) => (
+                                <Card key={module.id} className="overflow-hidden py-0">
+                                    <div className="border-b bg-muted/40 px-4 py-3">
+                                        <h3 className="font-medium text-foreground">{module.title}</h3>
+                                        {module.description && (
+                                            <p className="mt-1 text-sm text-muted-foreground">{module.description}</p>
+                                        )}
+                                    </div>
 
-                          //     <ul className="divide-y divide-gray-100">
-                          //         {module.items.map((item:any) => (
-                          //             <li
-                          //                 key={item.id}
-                          //                 className="flex items-center justify-between px-4 py-3 text-sm"
-                          //             >
-                          //                 <div className="flex items-center gap-3">
-                          //                     <span className="text-gray-400">
-                          //                         {item.type === 'assessment' ? '📝' : '▶'}
-                          //                     </span>
-                          //                     <span className={isEnrolled ? 'text-gray-900' : 'text-gray-500'}>
-                          //                         {item.title ?? 'Untitled'}
-                          //                     </span>
-                          //                 </div>
+                                    <ul className="divide-y">
+                                        {module.module_items.map((item) => (
+                                            <li
+                                                key={item.itemable.id}
+                                                className="flex items-center justify-between px-4 py-3 text-sm"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    {item.itemable_type === 'App\\Models\\assessment' ? (
+                                                        <FileCheck className="h-4 w-4 text-muted-foreground" />
+                                                    ) : (
+                                                        <PlayCircle className="h-4 w-4 text-muted-foreground" />
+                                                    )}
+                                                    <span className={isEnrolled ? 'text-foreground' : 'text-muted-foreground'}>
+                                                        {item.itemable.title ?? 'Untitled'}
+                                                    </span>
+                                                </div>
 
-                          //                 <div className="flex items-center gap-3 text-gray-400">
-                          //                     {item.duration_seconds && (
-                          //                         <span>{formatDuration(item.duration_seconds)}</span>
-                          //                     )}
-                          //                     {!isEnrolled && <span>🔒</span>}
-                          //                 </div>
-                          //             </li>
-                          //         ))}
-                          //     </ul>
-                          // </div>
-                      ))} */}
-                  </div>
-              </div>
-          </div>
+                                                <div className="flex items-center gap-3 text-muted-foreground">
+                                                    {item.itemable.duration_seconds && (
+                                                        <span>{formatDuration(item.itemable.duration_seconds)}</span>
+                                                    )}
+                                                    {!isEnrolled && <Lock className="h-3.5 w-3.5" />}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+            </div> 
         </>
     );
 }
+// export default function CourseShow() {
+//     const { course, enrollment, auth } = usePage<PageProps>().props;
+//     const [enrolling, setEnrolling] = useState(false);
 
+//     const isEnrolled = enrollment?.status === 'active' || enrollment?.status === 'completed';
 
+//     function handleEnroll() {
+//         setEnrolling(true);
+//         router.post(
+//             `/courses/${course.slug}/enroll`,
+//             {},
+//             {
+//                 preserveScroll: true,
+//                 onFinish: () => setEnrolling(false),
+//             },
+//         );
+//     }
 
+//     return (
+//         <>
+//             <Head title={course.title} />
 
+//             <div className="min-h-screen bg-background">
+//                 <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        
+//                     <Card className="overflow-hidden">
+                        
+//                         {course.thumbnail_url && (
+//                             <div className="aspect-[16/6] w-full overflow-hidden bg-muted">
+//                                 <img
+//                                     src={course.thumbnail_url}
+//                                     alt={course.title}
+//                                     className="h-full w-full object-cover"
+//                                 />
+//                             </div>
+//                         )}
 
+//                         <div className="space-y-4 p-6">
+//                             <div className="flex flex-wrap items-center gap-2">
+//                                 {course.category && (
+//                                     <Link href={`/categories/${course.category.slug}`}>
+//                                         <Badge variant="secondary" className="font-normal">
+//                                             {course.category.title}
+//                                         </Badge>
+//                                     </Link>
+//                                 )}
+//                                 <Badge className={`font-normal capitalize ${difficultyColor[course.difficulty_level]}`}>
+//                                     {course.difficulty_level}
+//                                 </Badge>
+//                             </div>
 
+//                             <h1 className="text-3xl font-bold tracking-tight text-foreground">
+//                                 {course.title}
+//                             </h1>
+
+//                             {course.creator && (
+//                                 <p className="text-sm text-muted-foreground">
+//                                     Created by <span className="font-medium text-foreground">{course.creator.name}</span>
+//                                 </p>
+//                             )}
+
+//                             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+//                                 <span className="flex items-center gap-1.5">
+//                                     <Clock className="h-4 w-4" />
+//                                     {course.duration}
+//                                 </span>
+//                                 {typeof course.students_count === 'number' && (
+//                                     <span className="flex items-center gap-1.5">
+//                                         <Users className="h-4 w-4" />
+//                                         {course.students_count} student{course.students_count === 1 ? '' : 's'}
+//                                     </span>
+//                                 )}
+//                                 <span className="flex items-center gap-1.5 uppercase">
+//                                     <Globe className="h-4 w-4" />
+//                                     {course.language}
+//                                 </span>
+//                             </div>
+
+//                             <p className="text-foreground/90">{course.description}</p>
+
+//                             {/* Enrollment CTA */}
+//                             <div className="pt-2">
+//                                 {!auth.user ? (
+//                                     <Button asChild>
+//                                         <Link href="/login">Log in to enroll</Link>
+//                                     </Button>
+//                                 ) : isEnrolled ? (
+//                                     <div className="space-y-3">
+//                                         <Button asChild>
+//                                             <Link href={`/learn/${course.slug}`}>
+//                                                 {enrollment?.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+//                                             </Link>
+//                                         </Button>
+//                                         {enrollment && enrollment.status === 'active' && (
+//                                             <div className="h-2 w-full max-w-xs overflow-hidden rounded-full bg-muted">
+//                                                 <div
+//                                                     className="h-full rounded-full bg-primary transition-all"
+//                                                     style={{ width: `${enrollment.progress_percentage}%` }}
+//                                                 />
+//                                             </div>
+//                                         )}
+//                                     </div>
+//                                 ) : (
+//                                     <Button onClick={handleEnroll} disabled={enrolling}>
+//                                         {enrolling ? 'Enrolling…' : 'Enroll for free'}
+//                                     </Button>
+//                                 )}
+//                             </div>
+//                         </div>
+//                     </Card>
+
+                    
+//                     <div className="mt-10">
+//                         <h2 className="mb-4 text-xl font-semibold text-foreground">Course content</h2>
+
+//                         <div className="space-y-4">
+//                             {course.modules?.map((module) => (
+//                                 <Card key={module.id} className="overflow-hidden py-0">
+//                                     <div className="border-b bg-muted/40 px-4 py-3">
+//                                         <h3 className="font-medium text-foreground">{module.title}</h3>
+//                                         {module.description && (
+//                                             <p className="mt-1 text-sm text-muted-foreground">{module.description}</p>
+//                                         )}
+//                                     </div>
+
+//                                     <ul className="divide-y">
+//                                         {module.items.map((item) => (
+//                                             <li
+//                                                 key={item.id}
+//                                                 className="flex items-center justify-between px-4 py-3 text-sm"
+//                                             >
+//                                                 <div className="flex items-center gap-3">
+//                                                     {item.type === 'assessment' ? (
+//                                                         <FileCheck className="h-4 w-4 text-muted-foreground" />
+//                                                     ) : (
+//                                                         <PlayCircle className="h-4 w-4 text-muted-foreground" />
+//                                                     )}
+//                                                     <span className={isEnrolled ? 'text-foreground' : 'text-muted-foreground'}>
+//                                                         {item.title ?? 'Untitled'}
+//                                                     </span>
+//                                                 </div>
+
+//                                                 <div className="flex items-center gap-3 text-muted-foreground">
+//                                                     {item.duration_seconds && (
+//                                                         <span>{formatDuration(item.duration_seconds)}</span>
+//                                                     )}
+//                                                     {!isEnrolled && <Lock className="h-3.5 w-3.5" />}
+//                                                 </div>
+//                                             </li>
+//                                         ))}
+//                                     </ul>
+//                                 </Card>
+//                             ))}
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </>
+//     );
+// }
