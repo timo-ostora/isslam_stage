@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Search, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { home } from '@/routes';
 
 interface CourseCard {
     id: number;
@@ -269,3 +270,15 @@ export default function CourseIndex() {
         </>
     );
 }
+CourseIndex.layout = {
+    
+    breadcrumbs: [
+        {
+            title: 'Home',
+            href: home(),
+        },
+        {
+            title: 'Courses',
+        },
+    ],
+};

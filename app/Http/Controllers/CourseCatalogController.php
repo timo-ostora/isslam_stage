@@ -109,6 +109,20 @@ class CourseCatalogController extends Controller
                 'status' => $enrollment->status,
                 'progress_percentage' => (float) $enrollment->progress_percentage,
             ] : null,
+            'breadcrumbs' => [
+                [
+                    'title' => 'Home',
+                    'href' => route('home'),
+                ],
+                [
+                    'title' => 'Courses',
+                    'href' => route('courses.index'),
+                ],
+                [
+                    'title' => $course->title,
+                    'href' => route('courses.show', $course->slug), // or "/courses/{$course->slug}"
+                ],
+            ],
         ]);
     }
 }
