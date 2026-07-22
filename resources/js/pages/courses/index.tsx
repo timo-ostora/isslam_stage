@@ -195,17 +195,6 @@ export default function CourseIndex() {
                                         </div>
 
                                         <CardHeader className="space-y-2">
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                {course.category && (
-                                                    <Badge variant="secondary" className="font-normal">
-                                                        {course.category.title}
-                                                    </Badge>
-                                                )}
-                                                <Badge className={`font-normal capitalize ${difficultyColor[course.difficulty_level]}`}>
-                                                    {course.difficulty_level}
-                                                </Badge>
-                                            </div>
-
                                             <h3 className="line-clamp-2 font-semibold leading-snug text-foreground group-hover:text-primary">
                                                 {course.title}
                                             </h3>
@@ -218,10 +207,20 @@ export default function CourseIndex() {
                                         </CardContent>
 
                                         <CardFooter className="flex items-center justify-between text-sm text-muted-foreground">
-                                            <span className="flex items-center gap-1">
-                                                <Clock className="h-3.5 w-3.5" />
-                                                {course.duration}
-                                            </span>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {course.category && (
+                                                    <Badge variant="secondary" className="font-normal">
+                                                        {course.category.title}
+                                                    </Badge>
+                                                )}
+                                                <Badge className={`font-normal capitalize ${difficultyColor[course.difficulty_level]}`}>
+                                                    {course.difficulty_level}
+                                                </Badge>
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="h-3.5 w-3.5" />
+                                                    {course.duration}
+                                                </span>
+                                            </div>
                                             <span className="flex items-center gap-1">
                                                 <Users className="h-3.5 w-3.5" />
                                                 {course.students_count}

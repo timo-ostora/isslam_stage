@@ -79,6 +79,25 @@ class LearningController extends Controller
         ]);
     }
 
+    public function complate(Course $course, ModuleItem $moduleItem): Response 
+    {
+        $user = Auth::user(); 
+        
+        // 1. Vérifier l'inscription
+        $enrollment = $this->resolveEnrollment($course, $user->id); 
+
+        if (!$enrollment) {
+            return response()->json(['message' => 'Enrollment not found'], 404);
+        }
+
+
+        $enrollment->progress_percentage += 1;
+        $enrollment->save();
+
+
+        
+    }
+
     private function resolveEnrollment(Course $course, int $userId): Enrollment
     {
         return Enrollment::query()

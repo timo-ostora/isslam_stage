@@ -43,7 +43,7 @@ class CourseCatalogController extends Controller
             ->when($sort === 'title', fn ($query) => $query->orderBy('title'))
             ->when($sort === 'popular', fn ($query) => $query->orderByDesc('enrollments_count'))
             ->when($sort === 'newest', fn ($query) => $query->orderByDesc('created_at'))
-            ->paginate(12)
+            ->paginate(6)
             ->withQueryString();
 
         return Inertia::render('courses/index', [
