@@ -18,25 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Search, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { home } from '@/routes';
-
-interface CourseCard {
-    id: number;
-    title: string;
-    slug: string;
-    description: string | null;
-    thumbnail_url: string | null;
-    difficulty_level: 'easy' | 'medium' | 'hard';
-    duration: string;
-    language: string;
-    students_count: number;
-    category?: { title: string; slug: string };
-}
-
-interface Category {
-    id: number;
-    title: string;
-    slug: string;
-}
+import { CourseCard, Category } from '@/types/course';
 
 interface Filters {
     search: string;

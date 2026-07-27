@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Auth;
  * 
  * @return resources/js/pages/home.jsx
  */
-Route::inertia('/', 'home')->name('home');
-
+// Route::inertia('/', 'home')->name('home');
+Route::get('/', [App\Http\Controllers\FrontEndController::class, 'home'])
+    ->name('home');
 /**
  * Courses catalog 
  * 

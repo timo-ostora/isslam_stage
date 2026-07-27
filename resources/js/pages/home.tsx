@@ -1,7 +1,7 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { home } from '@/routes';
 import courses from '@/routes/courses';
-
+import CoursesCarousel from '@/components/courses-carousel'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -13,13 +13,33 @@ import {
     Trophy,
     Users,
 } from 'lucide-react';
+interface CourseCard {
+    id: number;
+    title: string;
+    slug: string;
+    description: string | null;
+    thumbnail_url: string | null;
+    difficulty_level: 'easy' | 'medium' | 'hard';
+    duration: string;
+    language: string;
+    students_count: number;
+    category?: { title: string; slug: string };
+}
+interface PageProps {
+
+    data: [
+        popularCourses: CourseCard[]
+    ];
+    [key: string]: unknown;
+}
 
 export default function Home() {
+    const { data } = usePage<PageProps>().props;
+
     const defaultUser = {
         name: 'User',
     };
 
-    const user = usePage().props.auth.user || defaultUser;
 
     return (
         <main>
@@ -139,6 +159,8 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            <CoursesCarousel courses={data.popularCourses}/>
         </main>
     );
 }

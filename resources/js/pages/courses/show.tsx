@@ -3,61 +3,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Clock, Users, Globe, PlayCircle, FileCheck, Lock } from 'lucide-react';
-import { home } from '@/routes';
-import courses from '@/routes/courses';
-
-interface ModuleItem {
-    id: number;
-    position: number;
-    itemable_type: "App\\Models\\Lesson" | 'App\\Models\\assessment' | 'unknown';
-    itemable: Lesson | Assessment  ;
-}
-interface Lesson {
-    id : number,
-    title : string,
-    description : string,
-    type : string,
-    content_url : string,
-    content_text : string,
-    duration_seconds : number
-}
-interface Assessment {
-    id : number,
-    title : string,
-    description : string,
-    type : string,
-    duration_seconds : number,
-    passing_score : number,
-    max_attempts : number,
-}
-
-interface CourseModule {
-    id: number;
-    title: string;
-    description: string | null;
-    module_items: ModuleItem[];
-}
-
-interface Course {
-    id: number;
-    title: string;
-    slug: string;
-    description: string | null;
-    thumbnail_url: string | null;
-    difficulty_level: 'easy' | 'medium' | 'hard';
-    duration: string;
-    language: string;
-    students_count?: number;
-    category?: { title: string; slug: string };
-    creator?: { name: string };
-    modules?: CourseModule[];
-}
-
-interface Enrollment {
-    status: 'active' | 'completed' | 'cancelled';
-    progress_percentage: number;
-}
+import { Globe, PlayCircle, FileCheck, Lock } from 'lucide-react';
+import { Course, Enrollment,  } from '@/types/course';
 
 interface PageProps {
     course: Course;
