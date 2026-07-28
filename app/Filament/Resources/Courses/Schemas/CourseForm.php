@@ -15,7 +15,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-
+use Filament\Schemas\Components\Utilities\Set;
 class CourseForm
 {
     public static function configure(Schema $schema): Schema
@@ -28,7 +28,7 @@ class CourseForm
                     TextInput::make('title')
                         ->required()
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn ($state, Forms\Set $set) =>
+                        ->afterStateUpdated(fn ($state, Set $set) =>
                             $set('slug', str($state)->slug())),
 
                     TextInput::make('slug')
@@ -58,12 +58,21 @@ class CourseForm
                     //     ->directory('course-thumbnails')
                     //     ->imageEditor()
                     //     ->columnSpan(2),
-
-                    TextInput::make('thumbnail_url')
-                        ->label('Thumbnail URL')
-                        ->url()
-                        ->prefix('url')
-                        ->columnSpan(2),
+                    FileUpload::make('thumbnail_url')
+                        ->label('Course Thumbnail')
+                        ->disk('public')
+                        ->directory('course-thumbnails')
+                        ->visibility('public')
+                        ->image()
+                        ->imageEditor()
+                        ->acceptedFileTypes([
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                        ])
+                        ->maxSize(5120)
+                        ->required()
+                        ->columnSpanFull(),
 
                     TextInput::make('duration_seconds')
                         ->label('Total Duration (minutes)')

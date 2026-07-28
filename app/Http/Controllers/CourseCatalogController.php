@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CourseCatalogController extends Controller
 {
@@ -102,9 +104,17 @@ class CourseCatalogController extends Controller
                 ->whereIn('status', ['active', 'completed'])
                 ->first();
         }
-        // dd($course->toArray());
+        
         return Inertia::render('courses/show', [
-            'course' => $course->toArray(),
+            'course' => array_merge($course->toArray(), [
+                        'thumbnail_url' => filled($course->thumbnail_url)
+                            ? (
+                                Str::startsWith($course->thumbnail_url, ['http://', 'https://'])
+                                    ? $course->thumbnail_url
+                                    : Storage::disk('public')->url($course->thumbnail_url)
+                            )
+                            : null,
+                    ]),
             'enrollment' => $enrollment ? [
                 'status' => $enrollment->status,
                 'progress_percentage' => (float) $enrollment->progress_percentage,

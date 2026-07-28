@@ -50,18 +50,18 @@ const mainNavItems: NavItem[] = [
         title: 'Courses Catalog',
         href: courses.index(),
     },
-    {
-        title: 'Our Experts',
-        href: '',
-    }
+    // {
+    //     title: 'Our Experts',
+    //     href: '',
+    // }
 ];
 
 const rightNavItems: NavItem[] = [
-    {
-        title: 'Contenue Learning',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Play,
-    },
+    // {
+    //     title: 'Contenue Learning',
+    //     href: 'https://github.com/laravel/react-starter-kit',
+    //     icon: Play,
+    // },
 ];
 
 const activeItemStyles =
@@ -97,7 +97,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                     Navigation menu
                                 </SheetTitle>
                                 <SheetHeader className="flex justify-start text-left">
-                                    <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
+                                    <AppLogoIcon />
                                 </SheetHeader>
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
@@ -182,13 +182,6 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="group h-9 w-9 cursor-pointer"
-                            >
-                                <Search className="size-5! opacity-80 group-hover:opacity-100" />
-                            </Button>
                             <div className="ml-1 hidden gap-1 lg:flex">
                                 {rightNavItems.map((item) => (
                                     <Tooltip key={item.title}>

@@ -2,54 +2,91 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Models\User;
 use Inertia\Inertia;
-use App\Http\Resources\CourseResource;
+use Inertia\Response;
 
 class FrontEndController extends Controller
 {
-    public function home()
+    public function home(): Response
     {
         return Inertia::render('home', [
-          'data' => [
-            'popularCourses' => CourseResource::collection($this->getFeaturedCourses())->resolve(),
-            // 'featuredCourses' => $this->getFeaturedCourses(),
-            // 'experts' => $this->getExperts(),
-          ]
+            'data' => [
+                'popularCourses' => CourseResource::collection(
+                    $this->getFeaturedCourses()
+                )->resolve(),
+
+                'experts' => $this->getExperts(),
+
+                'stats' => [
+                    'courses' => Course::query()
+                        ->where('status', 'published')
+                        ->count(),
+
+                    'students' => User::query()
+                        ->role('student')
+                        ->count(),
+
+                    'experts' => User::query()
+                        ->role('professor')
+                        ->whereHas('createdCourses', function ($query) {
+                            $query->where('status', 'published');
+                        })
+                        ->count(),
+                ],
+            ],
         ]);
     }
 
     private function getFeaturedCourses()
     {
         return Course::query()
-            ->with(['creator', 'category'])
+            ->with([
+                'creator',
+                'category',
+            ])
             ->withCount('enrollments')
-            ->orderByDesc('enrollments_count')
             ->where('status', 'published')
+            ->orderByDesc('enrollments_count')
             ->take(10)
             ->get();
     }
 
-    private function getExperts()
+    private function getExperts(): array
     {
         return User::query()
-            ->role('professor') // Filament Shield / Spatie
-            ->withCount(['courses' => fn ($q) => $q->where('is_published', true)])
-            ->with('professorProfile') // si tu as une table à part pour bio/specialite
-            ->having('courses_count', '>', 0)
+            ->role('professor')
+            ->whereHas('createdCourses', function ($query) {
+                $query->where('status', 'published');
+            })
+            ->withCount([
+                'createdCourses as courses_count' => function ($query) {
+                    $query->where('status', 'published');
+                },
+            ])
+            ->with([
+                'createdCourses' => function ($query) {
+                    $query
+                        ->where('status', 'published')
+                        ->withCount('enrollments');
+                },
+            ])
             ->orderByDesc('courses_count')
-            ->take(6)
+            ->take(10)
             ->get()
-            ->map(fn (User $expert) => [
-                'id' => $expert->id,
-                'name' => $expert->name,
-                'avatar' => $expert->avatar_url,
-                'title' => $expert->professorProfile?->title, // ex: "Professeur de Fiqh"
-                'bio' => \Str::limit($expert->professorProfile?->bio, 100),
-                'courses_count' => $expert->courses_count,
-                'students_count' => $expert->courses()->withCount('enrollments')->get()->sum('enrollments_count'),
-                'rating' => round($expert->professorProfile?->average_rating ?? 0, 1),
-            ]);
+            ->map(function (User $expert) {
+                return [
+                    'id' => $expert->id,
+                    'name' => $expert->name,
+                    'courses_count' => (int) $expert->courses_count,
+                    'students_count' => (int) $expert
+                        ->createdCourses
+                        ->sum('enrollments_count'),
+                ];
+            })
+            ->values()
+            ->all();
     }
 }
