@@ -1,9 +1,4 @@
-import { useEffect, useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
     CheckCircle2,
     ChevronLeft,
@@ -13,20 +8,25 @@ import {
     FileText,
     Link as LinkIcon,
     Lock,
-    Menu,
     PanelLeftClose,
     PanelLeftOpen,
     PlayCircle,
 } from 'lucide-react';
+import { useEffect, useReducer, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
     contentTypeOf,
     isAssessment,
-    isLesson,
-    type LearningCourse,
-    type LearningEnrollment,
-    type LearningModuleItem,
-    type LearningPayload,
+    isLesson
+    
+    
+    
+    
 } from '@/types/learning';
+import type {LearningCourse, LearningEnrollment, LearningModuleItem, LearningPayload} from '@/types/learning';
 
 interface PageProps {
     learning: LearningPayload;
@@ -36,28 +36,43 @@ interface PageProps {
 const SIDEBAR_COLLAPSED_KEY = 'learning-sidebar-collapsed';
 
 function formatDuration(seconds: number | null): string {
-    if (!seconds) return '';
+    if (!seconds) {
+return '';
+}
+
     const m = Math.round(seconds / 60);
+
     return `${m} min`;
 }
 
 /** Converts a plain YouTube watch URL into an embeddable one; passes anything else through untouched. */
 function toEmbedUrl(url: string): string {
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+
     return match ? `https://www.youtube.com/embed/${match[1]}` : url;
 }
 
 function ItemIcon({ item, className }: { item: LearningModuleItem; className?: string }) {
-    if (isAssessment(item)) return <FileCheck className={className} />;
-    if (isLesson(item) && item.itemable.type === 'article') return <FileText className={className} />;
+    if (isAssessment(item)) {
+return <FileCheck className={className} />;
+}
+
+    if (isLesson(item) && item.itemable.type === 'article') {
+return <FileText className={className} />;
+}
+
     if (isLesson(item) && (item.itemable.type === 'pdf' || item.itemable.type === 'link')) {
         return <LinkIcon className={className} />;
     }
+
     return <PlayCircle className={className} />;
 }
 
 function LessonViewer({ item }: { item: LearningModuleItem }) {
-    if (!isLesson(item)) return null;
+    if (!isLesson(item)) {
+return null;
+}
+
     const lesson = item.itemable;
 
     if (lesson.type === 'video' && lesson.content_url) {
@@ -99,7 +114,10 @@ function LessonViewer({ item }: { item: LearningModuleItem }) {
 }
 
 function AssessmentViewer({ item }: { item: LearningModuleItem }) {
-    if (!isAssessment(item)) return null;
+    if (!isAssessment(item)) {
+return null;
+}
+
     const assessment = item.itemable;
 
     return (
@@ -176,6 +194,7 @@ function SidebarNav({
                         <div className="space-y-1">
                             {module.module_items.map((item) => {
                                 const isActive = item.id === currentItem.id;
+
                                 return (
                                     <Link
                                         key={item.id}
@@ -221,6 +240,7 @@ function IconRail({
         <div className="flex flex-col items-center gap-1 py-2">
             {allItems.map((item) => {
                 const isActive = item.id === currentItem.id;
+
                 return (
                     <Tooltip key={item.id}>
                         <TooltipTrigger asChild>
@@ -255,18 +275,19 @@ export default function LearningShow() {
 
         return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
     });
-    const [hydrated, setHydrated] = useState(false);
+    const [hydrated, markHydrated] = useReducer(() => true, false);
 
     // Mark hydration complete on the client so we can safely show the
     // desktop sidebar and avoid SSR/client mismatch for the initial layout.
     useEffect(() => {
-        setHydrated(true);
+        markHydrated();
     }, []);
 
     function toggleCollapsed() {
         setCollapsed((prev) => {
             const next = !prev;
             window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+
             return next;
         });
     }

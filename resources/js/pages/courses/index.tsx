@@ -1,14 +1,15 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Search, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -16,9 +17,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Search, Users, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { home } from '@/routes';
-import { CourseCard, Category } from '@/types/course';
+import type { CourseCard, Category } from '@/types/course';
 
 interface Filters {
     search: string;
@@ -68,16 +68,21 @@ export default function CourseIndex() {
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
+
             return;
         }
 
         const timeout = setTimeout(() => applyFilters({ search }), 400);
+
         return () => clearTimeout(timeout);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
     function goToPage(url: string | null) {
-        if (!url) return;
+        if (!url) {
+return;
+}
+
         router.get(url, {}, { preserveState: true, preserveScroll: true, only: ['courses'] });
     }
 

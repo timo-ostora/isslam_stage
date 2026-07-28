@@ -1,10 +1,10 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import { Globe, PlayCircle, FileCheck, Lock } from 'lucide-react';
-import { Course, Enrollment,  } from '@/types/course';
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import type { Course, Enrollment,  } from '@/types/course';
 
 interface PageProps {
     course: Course;
@@ -20,8 +20,12 @@ const difficultyColor: Record<Course['difficulty_level'], string> = {
 };
 
 function formatDuration(seconds: number | null): string {
-    if (!seconds) return '';
+    if (!seconds) {
+return '';
+}
+
     const m = Math.round(seconds / 60);
+
     return `${m} min`;
 }
 

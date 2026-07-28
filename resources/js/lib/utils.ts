@@ -12,7 +12,8 @@ export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
 }
 
 export function formatDuration(seconds: number): string {
-    let hours = Math.round(seconds / 3600);
+    const hours = Math.round(seconds / 3600);
+
     return `${hours} hrs`;
 }
 

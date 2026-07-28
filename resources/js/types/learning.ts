@@ -65,9 +65,18 @@ export interface LearningPayload {
 }
 
 export function contentTypeOf(item: LearningModuleItem): 'lesson' | 'assessment' | 'unknown' {
-    if (item.content_type) return item.content_type;
-    if (item.itemable_type?.endsWith('Lesson')) return 'lesson';
-    if (item.itemable_type?.endsWith('Assessment')) return 'assessment';
+    if (item.content_type) {
+return item.content_type;
+}
+
+    if (item.itemable_type?.endsWith('Lesson')) {
+return 'lesson';
+}
+
+    if (item.itemable_type?.endsWith('Assessment')) {
+return 'assessment';
+}
+
     return 'unknown';
 }
 

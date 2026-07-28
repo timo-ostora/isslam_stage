@@ -1,18 +1,17 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { home } from '@/routes';
-import courses from '@/routes/courses';
-import CoursesCarousel from '@/components/courses-carousel'
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-
 import {
     ArrowRight,
-    PlayCircle,
     BookOpen,
     GraduationCap,
     Trophy,
     Users,
 } from 'lucide-react';
+import CoursesCarousel from '@/components/courses-carousel'
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { home } from '@/routes';
+import courses from '@/routes/courses';
+
 interface CourseCard {
     id: number;
     title: string;
@@ -35,11 +34,6 @@ interface PageProps {
 
 export default function Home() {
     const { data } = usePage<PageProps>().props;
-
-    const defaultUser = {
-        name: 'User',
-    };
-
 
     return (
         <main>

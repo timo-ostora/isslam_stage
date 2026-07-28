@@ -1,30 +1,18 @@
 // components/FeaturedCoursesCarousel.tsx
-import { useEffect, useState } from 'react';
 import { Link, router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, Clock, Users } from 'lucide-react';
+import { useEffect, useReducer, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Carousel,
   CarouselContent,
-  CarouselItem,
-  type CarouselApi,
+  CarouselItem
+  
 } from '@/components/ui/carousel';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Clock, Star, Users } from 'lucide-react';
-import { CourseCard, Course } from '@/types/course';
+import type {CarouselApi} from '@/components/ui/carousel';
+import type { CourseCard, Course } from '@/types/course';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
-interface CourseCardData {
-  id: number;
-  title: string;
-  slug: string;
-  thumbnail: string | null;
-  level: 'beginner' | 'intermediate' | 'advanced';
-  category: string | null;
-  students_count: number;
-  rating: number;
-  creator: {
-    name: string;
-  };
-}
 
 const difficultyColor: Record<Course['difficulty_level'], string> = {
     easy: 'bg-primary/10 text-primary hover:bg-primary/10',
@@ -32,18 +20,66 @@ const difficultyColor: Record<Course['difficulty_level'], string> = {
     hard: 'bg-rose-100 text-rose-700 hover:bg-rose-100',
 };
 
+type CarouselState = {
+  current: number;
+  count: number;
+};
+
+type CarouselAction =
+  | { type: 'init'; current: number; count: number }
+  | { type: 'select'; current: number };
+
 export default function FeaturedCoursesCarousel({ courses }: { courses: CourseCard[] }) {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [carouselState, dispatch] = useReducer(
+    (state: CarouselState, action: CarouselAction): CarouselState => {
+      switch (action.type) {
+        case 'init':
+          return {
+            current: action.current,
+            count: action.count,
+          };
+        case 'select':
+          return {
+            ...state,
+            current: action.current,
+          };
+        default:
+          return state;
+      }
+    },
+    {
+      current: 0,
+      count: 0,
+    }
+  );
 
-useEffect(() => {
-  if (!api) return;
-  console.log('api ready', api); // debug
-  setCount(api.scrollSnapList().length);
-  setCurrent(api.selectedScrollSnap());
-  api.on('select', () => setCurrent(api.selectedScrollSnap()));
-}, [api]);
+  const { current, count } = carouselState;
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const updateState = () => {
+      dispatch({
+        type: 'select',
+        current: api.selectedScrollSnap(),
+      });
+    };
+
+    dispatch({
+      type: 'init',
+      current: api.selectedScrollSnap(),
+      count: api.scrollSnapList().length,
+    });
+
+    api.on('select', updateState);
+
+    return () => {
+      api.off('select', updateState);
+    };
+  }, [api]);
 
   return (
     <section className="py-12">
