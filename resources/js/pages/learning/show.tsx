@@ -248,14 +248,18 @@ export default function LearningShow() {
     const { course, enrollment, currentItem, previousItem, nextItem, statistics } = learning;
 
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(() => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
+        return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+    });
     const [hydrated, setHydrated] = useState(false);
 
-    // Read persisted collapse state after mount only, to avoid an
-    // SSR/client markup mismatch (localStorage doesn't exist on the server).
+    // Mark hydration complete on the client so we can safely show the
+    // desktop sidebar and avoid SSR/client mismatch for the initial layout.
     useEffect(() => {
-        const stored = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-        if (stored === '1') setCollapsed(true);
         setHydrated(true);
     }, []);
 
