@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table
-                ->string('avatar_url')
+                ->string('avatar_url' )
                 ->nullable()
                 ->after('email');
         });
